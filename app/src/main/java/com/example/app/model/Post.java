@@ -21,10 +21,10 @@ public class Post {
 	private String content;
 	@ManyToOne
 	@JoinColumn(name = "user_id")
+	private User user;
 	@ManyToMany
 	@JoinTable(name = "post_category", joinColumns = @JoinColumn(name = "post_id"), inverseJoinColumns = @JoinColumn(name = "category_id"))
 	private List<Category> categories = new ArrayList<>();
-	private User user;
 
 	public Post() {
 		super();
