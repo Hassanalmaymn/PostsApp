@@ -1,6 +1,7 @@
 package com.example.app.Controller;
 
 import java.util.List;
+import java.util.Optional;
 
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.web.bind.annotation.GetMapping;
@@ -36,6 +37,11 @@ public class PostsController {
 	@PostMapping(path = "/users/{id}/posts")
 	public void saveNewPost(@RequestBody Post post) {
 		postRepository.save(post);
+	}
+
+	@GetMapping(path = "/users/{id}/posts/{post_id}")
+	public Optional<Post> getSpecificPostForSpecificUser(@PathVariable("post_id") long post_id) {
+		return postRepository.findById(post_id);
 	}
 
 }
