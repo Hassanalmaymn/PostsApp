@@ -21,7 +21,7 @@ public class User {
 	@Column(nullable = false)
 	private String email;
 	 @OneToMany(mappedBy = "user", cascade = CascadeType.ALL, orphanRemoval = true)
-	    private List<ToDo> todos = new ArrayList<>();
+	    private List<Post> todos = new ArrayList<>();
 
 	public User(long id, String name, String email) {
 
