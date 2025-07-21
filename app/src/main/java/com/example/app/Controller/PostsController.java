@@ -10,20 +10,24 @@ import org.springframework.web.bind.annotation.GetMapping;
 import org.springframework.web.bind.annotation.PathVariable;
 import org.springframework.web.bind.annotation.PostMapping;
 import org.springframework.web.bind.annotation.RequestBody;
+import org.springframework.web.bind.annotation.RequestParam;
 import org.springframework.web.bind.annotation.RestController;
 
 import com.example.app.model.Category;
 import com.example.app.model.Post;
 import com.example.app.repository.PostRepository;
+import com.example.app.service.PostServices;
 
 @RestController
 public class PostsController {
 	private final PostRepository postRepository;
+	private final PostServices postServices;
 
 	@Autowired
-	public PostsController(PostRepository postRepository) {
+	public PostsController(PostRepository postRepository, PostServices postservices) {
 		super();
 		this.postRepository = postRepository;
+		this.postServices = postservices;
 	}
 
 	@GetMapping(path = "/all_posts")
@@ -62,4 +66,12 @@ public class PostsController {
 	public void deletePost(@PathVariable("post_id") long post_id) {
 		postRepository.deleteById(post_id);
 	}
+
+	@GetMapping("/posts/search")
+	public List<Post> search(@RequestParam(name = "keyword", required = false) String keyword,
+			@RequestParam(name = "userId", required = false) Long userId,
+			@RequestParam(name = "categoryId", required = false) Long categoryId) {
+		return postServices.searchPosts(keyword, userId, categoryId);
+	}
+
 }

@@ -1,5 +1,5 @@
 import PostCard from "./postCard";
-
+import CreateNewPostCars from "./CreateNewPostCard";
 export default async function PostsPage() {
   const response = await fetch("http://localhost:8083/users/1/posts", {
     cache: "no-store",
@@ -12,9 +12,9 @@ export default async function PostsPage() {
 
       <div className="m-4 grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-3 gap-4">
         {posts.map((post) => (
-            
           <PostCard key={post.id} post={post} />
         ))}
+        <CreateNewPostCars />
       </div>
     </main>
   );
