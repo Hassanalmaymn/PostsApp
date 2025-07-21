@@ -1,16 +1,5 @@
-import { Geist, Geist_Mono } from "next/font/google";
 import "./globals.css";
-
-const geistSans = Geist({
-  variable: "--font-geist-sans",
-  subsets: ["latin"],
-});
-
-const geistMono = Geist_Mono({
-  variable: "--font-geist-mono",
-  subsets: ["latin"],
-});
-
+import NavigationBar from "./navigationBar";
 export const metadata = {
   title: "Posts app",
   description: "posts app using Next.js and javascript",
@@ -19,7 +8,9 @@ export const metadata = {
 export default function RootLayout({ children }) {
   return (
     <html lang="en">
-      <body>{children}</body>
+      <body>
+        <NavigationBar>{children}</NavigationBar>
+      </body>
     </html>
   );
 }
