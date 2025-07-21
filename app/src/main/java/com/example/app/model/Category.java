@@ -11,12 +11,15 @@ import jakarta.persistence.ManyToMany;
 import java.util.ArrayList;
 import java.util.List;
 
+import com.fasterxml.jackson.annotation.JsonIgnore;
+
 @Entity
 public class Category {
 	@Id
 	@GeneratedValue(strategy = GenerationType.IDENTITY)
 	private long id;
 	private String category_name;
+	@JsonIgnore
 	@ManyToMany
 	@JoinTable(name = "post_category", joinColumns = @JoinColumn(name = "category_id"), inverseJoinColumns = @JoinColumn(name = "post_id"))
 	private List<Post> posts = new ArrayList<>();
@@ -33,6 +36,14 @@ public class Category {
 
 	public long getId() {
 		return id;
+	}
+
+	public List<Post> getPosts() {
+		return posts;
+	}
+
+	public void setPosts(List<Post> posts) {
+		this.posts = posts;
 	}
 
 	public void setId(long id) {
