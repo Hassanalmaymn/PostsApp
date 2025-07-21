@@ -1,7 +1,10 @@
 package com.example.app.model;
 
+import java.time.LocalDateTime;
 import java.util.ArrayList;
 import java.util.List;
+
+import org.springframework.data.annotation.CreatedDate;
 
 import jakarta.persistence.Entity;
 import jakarta.persistence.GeneratedValue;
@@ -19,6 +22,8 @@ public class Post {
 	private Long id;
 	private String title;
 	private String content;
+	@CreatedDate
+	private LocalDateTime created_at;
 	@ManyToOne
 	@JoinColumn(name = "user_id")
 	private User user;
@@ -39,12 +44,14 @@ public class Post {
 		super();
 	}
 
-	public Post(Long id, String title, String content, User user) {
+	public Post(Long id, String title, String content, LocalDateTime created_at, User user) {
 		super();
 		this.id = id;
 		this.title = title;
 		this.content = content;
+		this.created_at = created_at;
 		this.user = user;
+
 	}
 
 	public Long getId() {
@@ -77,6 +84,14 @@ public class Post {
 
 	public void setUser(User user) {
 		this.user = user;
+	}
+
+	public LocalDateTime getCreated_at() {
+		return created_at;
+	}
+
+	public void setCreated_at(LocalDateTime created_at) {
+		this.created_at = created_at;
 	}
 
 }
