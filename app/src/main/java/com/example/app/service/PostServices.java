@@ -15,16 +15,38 @@ public class PostServices {
 	@Autowired
 	private PostRepository postRepository;
 
-	public List<Post> searchPosts(String keyword, Long userId, Long categoryId) {
+	public List<Post> searchPostsByKeywordTitle(String keyword) {
 		Specification<Post> spec = (root, query, cb) -> cb.conjunction();
 
 		if (keyword != null && !keyword.isBlank()) {
-			spec = spec.and(PostSpecifications.findByKeyword(keyword));
+			spec = spec.and(PostSpecifications.findByKeywordTitle(keyword));
 		}
+
+		return postRepository.findAll(spec);
+	}
+
+	public List<Post> searchPostsByKeywordContent(String keyword) {
+		Specification<Post> spec = (root, query, cb) -> cb.conjunction();
+
+		if (keyword != null && !keyword.isBlank()) {
+			spec = spec.and(PostSpecifications.findByKeywordContent(keyword));
+		}
+
+		return postRepository.findAll(spec);
+	}
+
+	public List<Post> searchPostsUserId(Long userId) {
+		Specification<Post> spec = (root, query, cb) -> cb.conjunction();
 
 		if (userId != null) {
 			spec = spec.and(PostSpecifications.hasUserId(userId));
 		}
+
+		return postRepository.findAll(spec);
+	}
+
+	public List<Post> searchPostsByCategory(Long categoryId) {
+		Specification<Post> spec = (root, query, cb) -> cb.conjunction();
 
 		if (categoryId != null) {
 			spec = spec.and(PostSpecifications.hasCategoryId(categoryId));

@@ -3,6 +3,7 @@ package com.example.app.model;
 import java.time.LocalDateTime;
 import java.util.ArrayList;
 import java.util.List;
+import java.util.Objects;
 
 import org.springframework.data.annotation.CreatedDate;
 
@@ -94,4 +95,18 @@ public class Post {
 		this.created_at = created_at;
 	}
 
+	@Override
+	public boolean equals(Object o) {
+		if (this == o)
+			return true;
+		if (o == null || getClass() != o.getClass())
+			return false;
+		Post post = (Post) o;
+		return id == post.id;
+	}
+
+	@Override
+	public int hashCode() {
+		return Objects.hash(id);
+	}
 }

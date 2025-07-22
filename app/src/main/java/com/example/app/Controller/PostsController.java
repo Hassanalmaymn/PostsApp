@@ -1,7 +1,10 @@
 package com.example.app.Controller;
 
+import java.util.ArrayList;
+import java.util.HashSet;
 import java.util.List;
 import java.util.Optional;
+import java.util.Set;
 
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.http.ResponseEntity;
@@ -14,6 +17,7 @@ import org.springframework.web.bind.annotation.RequestBody;
 import org.springframework.web.bind.annotation.RequestParam;
 import org.springframework.web.bind.annotation.RestController;
 
+import com.example.app.DTO.UserDTO;
 import com.example.app.model.Category;
 import com.example.app.model.Post;
 import com.example.app.repository.PostRepository;
@@ -40,6 +44,7 @@ public class PostsController {
 	public List<Post> getPostsForSpecificUser(@PathVariable("id") long id) {
 		return postRepository.findByUserId(id);
 	}
+
 	@CrossOrigin(origins = "http://localhost:3000")
 	@PostMapping(path = "/users/{id}/posts")
 	public void saveNewPost(@RequestBody Post post) {
@@ -68,11 +73,18 @@ public class PostsController {
 		postRepository.deleteById(post_id);
 	}
 
+	@CrossOrigin(origins = "http://localhost:3000")
 	@GetMapping("/posts/search")
-	public List<Post> search(@RequestParam(name = "keyword", required = false) String keyword,
-			@RequestParam(name = "userId", required = false) Long userId,
-			@RequestParam(name = "categoryId", required = false) Long categoryId) {
-		return postServices.searchPosts(keyword, userId, categoryId);
+	public List<Post> searchByKeyword(@RequestParam(name = "keyword", required = false) String keyword) {
+		Set<Post> result = new HashSet<>();
+		result.addAll(postServices.searchPostsByKeywordTitle(keyword));
+		result.addAll(postServices.searchPostsByKeywordContent(keyword));
+		return new ArrayList<>(result);
+	}
+
+	@PostMapping("/posts/search")
+	public List<Post> search(@RequestBody UserDTO userId) {
+		return postServices.searchPostsUserId(userId.getId());
 	}
 
 }

@@ -1,4 +1,5 @@
 import Link from "next/link";
+import Search from "./Search";
 export default function NavigationBar({ children }) {
   return (
     <>
@@ -14,13 +15,7 @@ export default function NavigationBar({ children }) {
             <Link href="/posts">posts</Link>
           </li>
         </ul>
-        <div>
-          <input
-            type="text"
-            className="border p-2 rounded"
-            placeholder="Search posts..."
-          />
-        </div>
+        <Search />
       </nav>
       {children}
       <footer className="m-4 text-center">

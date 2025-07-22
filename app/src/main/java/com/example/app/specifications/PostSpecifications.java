@@ -7,8 +7,12 @@ import com.example.app.model.Post;
 
 public class PostSpecifications {
 
-	public static Specification<Post> findByKeyword(String keyword) {
-		return (root, query, cb) -> cb.like(cb.lower(root.get("title")), "%" + keyword.toLowerCase() + "%");
+	public static Specification<Post> findByKeywordTitle(String title) {
+		return (root, query, cb) -> cb.like(cb.lower(root.get("title")), "%" + title.toLowerCase() + "%");
+	}
+
+	public static Specification<Post> findByKeywordContent(String content) {
+		return (root, query, cb) -> cb.like(cb.lower(root.get("content")), "%" + content.toLowerCase() + "%");
 	}
 
 	public static Specification<Post> hasUserId(Long userId) {
