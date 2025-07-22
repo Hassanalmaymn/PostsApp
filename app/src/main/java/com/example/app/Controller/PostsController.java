@@ -1,64 +1,61 @@
 package com.example.app.Controller;
 
-import java.util.ArrayList;
-import java.util.HashSet;
 import java.util.List;
 import java.util.Optional;
-import java.util.Set;
 
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.http.ResponseEntity;
 import org.springframework.web.bind.annotation.CrossOrigin;
-import org.springframework.web.bind.annotation.DeleteMapping;
 import org.springframework.web.bind.annotation.GetMapping;
 import org.springframework.web.bind.annotation.PathVariable;
 import org.springframework.web.bind.annotation.PostMapping;
 import org.springframework.web.bind.annotation.RequestBody;
+import org.springframework.web.bind.annotation.RequestMapping;
 import org.springframework.web.bind.annotation.RequestParam;
 import org.springframework.web.bind.annotation.RestController;
 
-import com.example.app.DTO.UserDTO;
 import com.example.app.model.Category;
 import com.example.app.model.Post;
 import com.example.app.repository.PostRepository;
-import com.example.app.service.PostServices;
+import com.example.app.service.PostService;
 
 @RestController
+@RequestMapping(path = "/posts")
 public class PostsController {
-	private final PostRepository postRepository;
-	private final PostServices postServices;
+//	private final PostRepository postRepository;
+	private final PostService postService;
 
 	@Autowired
-	public PostsController(PostRepository postRepository, PostServices postservices) {
+	public PostsController(PostRepository postRepository, PostService postservices) {
 		super();
-		this.postRepository = postRepository;
-		this.postServices = postservices;
+//		this.postRepository = postRepository;
+		this.postService = postservices;
 	}
 
 	@GetMapping(path = "/all_posts")
 	public List<Post> getAllPosts() {
-		return postRepository.findAll();
+		return postService.getAllPosts();
 	}
 
-	@GetMapping(path = "/users/{id}/posts")
-	public List<Post> getPostsForSpecificUser(@PathVariable("id") long id) {
-		return postRepository.findByUserId(id);
+	@GetMapping(path = "/{user_id}")
+	public List<Post> getPostsForSpecificUser(@PathVariable("user_id") long id) {
+		return postService.findByUserId(id);
 	}
 
 	@CrossOrigin(origins = "http://localhost:3000")
-	@PostMapping(path = "/users/{id}/posts")
+	@PostMapping(path = "/")
 	public void saveNewPost(@RequestBody Post post) {
-		postRepository.save(post);
+		postService.save(post);
 	}
 
-	@GetMapping(path = "/users/{id}/posts/{post_id}")
+	@GetMapping(path = "/{post_id}")
 	public Optional<Post> getSpecificPostForSpecificUser(@PathVariable("post_id") long post_id) {
-		return postRepository.findById(post_id);
+		return postService.findPostById(post_id);
 	}
 
-	@GetMapping(path = "/users/{id}/posts/{post_id}/getCategories")
+	@GetMapping(path = "/{post_id}/getCategories")
 	public ResponseEntity<List<Category>> getPostCategories(@PathVariable("post_id") long post_id) {
-		Optional<Post> postOptional = postRepository.findById(post_id);
+		Optional<Post> postOptional = postService.findPostById(post_id);
 
 		if (postOptional.isPresent()) {
 			List<Category> categories = postOptional.get().getCategories();
@@ -68,23 +65,16 @@ public class PostsController {
 		}
 	}
 
-	@DeleteMapping(path = "/users/{id}/posts/{post_id}")
+	@PostMapping(path = "/delete/{post_id}")
 	public void deletePost(@PathVariable("post_id") long post_id) {
-		postRepository.deleteById(post_id);
+		postService.deletePostById(post_id);
 	}
 
 	@CrossOrigin(origins = "http://localhost:3000")
-	@GetMapping("/posts/search")
+	@GetMapping("/search")
 	public List<Post> searchByKeyword(@RequestParam(name = "keyword", required = false) String keyword) {
-		Set<Post> result = new HashSet<>();
-		result.addAll(postServices.searchPostsByKeywordTitle(keyword));
-		result.addAll(postServices.searchPostsByKeywordContent(keyword));
-		return new ArrayList<>(result);
-	}
 
-	@PostMapping("/posts/search")
-	public List<Post> search(@RequestBody UserDTO userId) {
-		return postServices.searchPostsUserId(userId.getId());
+		return postService.searchPostsByKeyword(keyword);
 	}
 
 }
