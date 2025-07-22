@@ -57,7 +57,10 @@ export default function Search() {
                   searchInputRef.current.value = "";
                 }}
               >
-                <li key={post.id} className="border-b border-gray-200 py-1">
+                <li
+                  key={post.id}
+                  className="border-b border-gray-200 hover:bg-gray-300 p-3 rounded-lg"
+                >
                   {post.title}
                 </li>
               </Link>
