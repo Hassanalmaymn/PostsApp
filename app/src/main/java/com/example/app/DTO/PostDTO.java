@@ -1,21 +1,29 @@
 package com.example.app.DTO;
 
 import java.time.LocalDateTime;
+import java.util.ArrayList;
+import java.util.List;
+
+import com.example.app.model.Category;
 
 public class PostDTO {
+	private long id;
 	private String title;
 	private String content;
 	private LocalDateTime created_at;
+	private List<Category> categories;
 
 	public PostDTO() {
 		super();
 	}
 
-	public PostDTO(String title, String content, LocalDateTime created_at) {
+	public PostDTO(long id, String title, String content, LocalDateTime created_at, List<Category> categories) {
 		super();
+		this.id = id;
 		this.title = title;
 		this.content = content;
 		this.created_at = created_at;
+		this.categories = categories;
 	}
 
 	public String getTitle() {
@@ -40,6 +48,22 @@ public class PostDTO {
 
 	public void setCreated_at(LocalDateTime created_at) {
 		this.created_at = created_at;
+	}
+
+	public long getId() {
+		return id;
+	}
+
+	public void setId(long id) {
+		this.id = id;
+	}
+
+	public List<Category> getCategories() {
+		return categories;
+	}
+
+	public void setCategories(List<Category> categories) {
+		this.categories = categories;
 	}
 
 }
