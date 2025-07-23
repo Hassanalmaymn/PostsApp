@@ -18,7 +18,7 @@ export default function NavigationBar({ children }) {
         <Search />
       </nav>
       {children}
-      <footer className="m-4 text-center">
+      <footer className="m-4 text-center bg-gradient-to-b from-gray-200 to-gray-400">
         <p>&copy; {new Date().getFullYear()} Posts App</p>
       </footer>
     </>

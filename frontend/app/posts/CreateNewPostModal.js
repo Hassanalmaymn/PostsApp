@@ -1,10 +1,27 @@
 "use client";
 
-import { useActionState } from "react";
+import { Fragment, useActionState, useEffect, useState } from "react";
 import { createPost } from "../actions/saveNewPost";
+import { api } from "../api/axios";
 
 export default function CreateNewPostModal({ onClose }) {
   const [state, formAction] = useActionState(createPost, null);
+  const [selectedCategory, setSelectedCategory] = useState([]);
+  const [categories, setCategories] = useState([]);
+
+  useEffect(() => {
+    async function fetchCategories() {
+      const response = await api.get("/categories");
+      console.log(response);
+      if (response.status === 200) {
+        const data = response.data;
+        setCategories(data);
+      } else {
+        console.error("Failed to fetch categories");
+      }
+    }
+    fetchCategories();
+  }, []);
 
   return (
     <div className="fixed inset-0 flex items-center justify-center bg-gray-800 bg-opacity-50">
@@ -29,6 +46,41 @@ export default function CreateNewPostModal({ onClose }) {
               name="content"
               required
             ></textarea>
+          </div>
+          <div className="mb-4">
+            <label className="block text-sm font-semibold mb-2 text-gray-700">
+              Select Categories
+            </label>
+            <div className="grid grid-cols-1 sm:grid-cols-2 md:grid-cols-3 gap-3">
+              {categories.map((category) => (
+                <label
+                  key={category.id}
+                  htmlFor={`category-${category.id}`}
+                  className="flex items-center space-x-2 p-2 border rounded-lg cursor-pointer transition-all hover:shadow-md bg-white"
+                >
+                  <input
+                    type="checkbox"
+                    value={category.id}
+                    id={`category-${category.id}`}
+                    className="h-4 w-4 text-blue-600 focus:ring-blue-500 border-gray-300 rounded"
+                    name="category"
+                    onChange={(e) => {
+                      const id = parseInt(e.target.value);
+                      if (e.target.checked) {
+                        setSelectedCategory((prev) => [...prev, id]);
+                      } else {
+                        setSelectedCategory((prev) =>
+                          prev.filter((cid) => cid !== id)
+                        );
+                      }
+                    }}
+                  />
+                  <span className="text-sm text-gray-800">
+                    {category.category_name}
+                  </span>
+                </label>
+              ))}
+            </div>
           </div>
           <button
             type="submit"
