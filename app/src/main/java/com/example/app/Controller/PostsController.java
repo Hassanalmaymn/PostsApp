@@ -14,6 +14,7 @@ import org.springframework.web.bind.annotation.RequestMapping;
 import org.springframework.web.bind.annotation.RequestParam;
 import org.springframework.web.bind.annotation.RestController;
 
+import com.example.app.exception.ResourceNotFoundException;
 import com.example.app.model.Category;
 import com.example.app.model.Post;
 
@@ -49,8 +50,9 @@ public class PostsController {
 	}
 
 	@GetMapping(path = "/{post_id}")
-	public Optional<Post> getSpecificPostForSpecificUser(@PathVariable("post_id") long post_id) {
-		return postService.findPostById(post_id);
+	public Post getSpecificPostForSpecificUser(@PathVariable("post_id") long post_id) {
+		return postService.findPostById(post_id)
+				.orElseThrow(() -> new ResourceNotFoundException("no post with id:" + post_id));
 	}
 
 	@GetMapping(path = "/{post_id}/getCategories")
