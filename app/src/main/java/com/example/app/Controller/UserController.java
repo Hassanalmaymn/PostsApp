@@ -11,6 +11,7 @@ import org.springframework.web.bind.annotation.RequestBody;
 import org.springframework.web.bind.annotation.RequestMapping;
 import org.springframework.web.bind.annotation.RestController;
 
+import com.example.app.DTO.UserDTO;
 import com.example.app.model.User;
 import com.example.app.service.UserService;
 
@@ -26,7 +27,7 @@ public class UserController {
 	}
 
 	@GetMapping
-	public List<User> retrieveUsers() {
+	public List<UserDTO> retrieveUsers() {
 		return userService.retrieveUsers();
 	}
 
@@ -41,7 +42,7 @@ public class UserController {
 	}
 
 	@GetMapping("/{id}")
-	public Optional<User> getUser(@PathVariable("id") long id) {
+	public Optional<UserDTO> getUser(@PathVariable("id") long id) {
 		return userService.getUser(id);
 	}
 }
