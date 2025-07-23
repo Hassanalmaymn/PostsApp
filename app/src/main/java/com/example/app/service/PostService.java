@@ -1,9 +1,12 @@
 package com.example.app.service;
 
+import com.example.app.DTO.PostDTO;
 import com.example.app.model.Category;
 import com.example.app.model.Post;
 import com.example.app.repository.PostRepository;
 import com.example.app.specifications.PostSpecifications;
+
+import org.modelmapper.ModelMapper;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.data.jpa.domain.Specification;
 import org.springframework.http.ResponseEntity;
@@ -11,21 +14,31 @@ import org.springframework.stereotype.Service;
 
 import java.util.List;
 import java.util.Optional;
+import java.util.stream.Collector;
+import java.util.stream.Collectors;
 
 @Service
 public class PostService {
 
 	@Autowired
 	private PostRepository postRepository;
+	private final ModelMapper modelMapper;
 
-	public List<Post> searchPostsByKeyword(String keyword) {
+	public PostService(PostRepository postRepository, ModelMapper modelMapper) {
+		super();
+		this.postRepository = postRepository;
+		this.modelMapper = modelMapper;
+	}
+
+	public List<PostDTO> searchPostsByKeyword(String keyword) {
 		Specification<Post> spec = (root, query, cb) -> cb.conjunction();
 
 		if (keyword != null && !keyword.isBlank()) {
 			spec = spec.and(PostSpecifications.findByKeyword(keyword));
 		}
 
-		return postRepository.findAll(spec);
+		return postRepository.findAll(spec).stream().map((post) -> modelMapper.map(post, PostDTO.class))
+				.collect(Collectors.toList());
 	}
 
 	public List<Post> searchPostsUserId(Long userId) {
@@ -48,12 +61,14 @@ public class PostService {
 		return postRepository.findAll(spec);
 	}
 
-	public List<Post> getAllPosts() {
-		return postRepository.findAll();
+	public List<PostDTO> getAllPosts() {
+		return postRepository.findAll().stream().map((post) -> modelMapper.map(post, PostDTO.class))
+				.collect(Collectors.toList());
 	}
 
-	public List<Post> findByUserId(long id) {
-		return postRepository.findByUserId(id);
+	public List<PostDTO> findByUserId(long id) {
+		return postRepository.findByUserId(id).stream().map((post) -> modelMapper.map(post, PostDTO.class))
+				.collect(Collectors.toList());
 	}
 
 	public void save(Post post) {
@@ -61,13 +76,13 @@ public class PostService {
 
 	}
 
-	public Optional<Post> findPostById(long post_id) {
+	public Optional<PostDTO> findPostById(long post_id) {
 
-		return postRepository.findById(post_id);
+		return postRepository.findById(post_id).map((post) -> modelMapper.map(post, PostDTO.class));
 	}
 
 	public ResponseEntity<List<Category>> getPostCategories(long post_id) {
-		Optional<Post> postOptional = findPostById(post_id);
+		Optional<Post> postOptional = postRepository.findById(post_id);
 
 		if (postOptional.isPresent()) {
 			List<Category> categories = postOptional.get().getCategories();

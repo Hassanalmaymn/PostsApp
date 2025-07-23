@@ -27,7 +27,6 @@ public class Post {
 	private String content;
 	@CreatedDate
 	private LocalDateTime created_at;
-	@JsonIgnore
 	@ManyToOne
 	@JoinColumn(name = "user_id")
 	private User user;

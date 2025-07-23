@@ -7,6 +7,7 @@ import org.springframework.web.bind.annotation.RequestBody;
 import org.springframework.web.bind.annotation.RequestMapping;
 import org.springframework.web.bind.annotation.RestController;
 
+import com.example.app.DTO.CategoryDTO;
 import com.example.app.model.Category;
 import com.example.app.service.CategoryService;
 
@@ -33,14 +34,19 @@ public class CategoriesController {
 //		}
 //	}
 
-	@GetMapping("/")
+	@GetMapping
 	public List<Category> getAllCategories() {
 		return categoryService.getAllCategories();
 	}
 
-	@PostMapping("/")
+	@PostMapping
 	public void addNewCategory(@RequestBody Category category) {
 		categoryService.addNewCategory(category);
+	}
+
+	@GetMapping("/{post_id}")
+	public List<CategoryDTO> getAllCategories(@PathVariable(name = "post_id") long postId) {
+		return categoryService.searchCategoriesByPostId(postId);
 	}
 
 	@PostMapping("/{category_id}/delete")

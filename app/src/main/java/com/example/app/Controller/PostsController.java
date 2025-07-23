@@ -14,6 +14,7 @@ import org.springframework.web.bind.annotation.RequestMapping;
 import org.springframework.web.bind.annotation.RequestParam;
 import org.springframework.web.bind.annotation.RestController;
 
+import com.example.app.DTO.PostDTO;
 import com.example.app.exception.ResourceNotFoundException;
 import com.example.app.model.Category;
 import com.example.app.model.Post;
@@ -34,12 +35,12 @@ public class PostsController {
 	}
 
 	@GetMapping("")
-	public List<Post> getAllPosts() {
+	public List<PostDTO> getAllPosts() {
 		return postService.getAllPosts();
 	}
 
 	@GetMapping(path = "/getUserPosts/{user_id}")
-	public List<Post> getPostsForSpecificUser(@PathVariable("user_id") long id) {
+	public List<PostDTO> getPostsForSpecificUser(@PathVariable("user_id") long id) {
 		return postService.findByUserId(id);
 	}
 
@@ -50,21 +51,14 @@ public class PostsController {
 	}
 
 	@GetMapping(path = "/{post_id}")
-	public Post getSpecificPostForSpecificUser(@PathVariable("post_id") long post_id) {
+	public PostDTO getSpecificPost(@PathVariable("post_id") long post_id) {
 		return postService.findPostById(post_id)
 				.orElseThrow(() -> new ResourceNotFoundException("no post with id:" + post_id));
 	}
 
 	@GetMapping(path = "/{post_id}/getCategories")
 	public ResponseEntity<List<Category>> getPostCategories(@PathVariable("post_id") long post_id) {
-		Optional<Post> postOptional = postService.findPostById(post_id);
-
-		if (postOptional.isPresent()) {
-			List<Category> categories = postOptional.get().getCategories();
-			return ResponseEntity.ok(categories);
-		} else {
-			return ResponseEntity.notFound().build();
-		}
+		return getPostCategories(post_id);
 	}
 
 	@PostMapping(path = "/delete/{post_id}")
@@ -74,7 +68,7 @@ public class PostsController {
 
 	@CrossOrigin(origins = "http://localhost:3000")
 	@GetMapping("/search")
-	public List<Post> searchByKeyword(@RequestParam(name = "keyword", required = false) String keyword) {
+	public List<PostDTO> searchByKeyword(@RequestParam(name = "keyword", required = false) String keyword) {
 
 		return postService.searchPostsByKeyword(keyword);
 	}
