@@ -16,7 +16,7 @@ import org.springframework.web.bind.annotation.RestController;
 
 import com.example.app.model.Category;
 import com.example.app.model.Post;
-import com.example.app.repository.PostRepository;
+
 import com.example.app.service.PostService;
 
 @RestController
@@ -26,24 +26,24 @@ public class PostsController {
 	private final PostService postService;
 
 	@Autowired
-	public PostsController(PostRepository postRepository, PostService postservices) {
+	public PostsController(PostService postservices) {
 		super();
 //		this.postRepository = postRepository;
 		this.postService = postservices;
 	}
 
-	@GetMapping(path = "/all_posts")
+	@GetMapping("")
 	public List<Post> getAllPosts() {
 		return postService.getAllPosts();
 	}
 
-	@GetMapping(path = "/{user_id}")
+	@GetMapping(path = "/getUserPosts/{user_id}")
 	public List<Post> getPostsForSpecificUser(@PathVariable("user_id") long id) {
 		return postService.findByUserId(id);
 	}
 
 	@CrossOrigin(origins = "http://localhost:3000")
-	@PostMapping(path = "/")
+	@PostMapping("")
 	public void saveNewPost(@RequestBody Post post) {
 		postService.save(post);
 	}

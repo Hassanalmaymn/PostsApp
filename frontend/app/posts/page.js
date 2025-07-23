@@ -1,10 +1,9 @@
 import PostCard from "./postCard";
 import CreateNewPostCard from "./CreateNewPostCard";
+import { api } from "../api/axios";
 export default async function PostsPage() {
-  const response = await fetch("http://localhost:8083/users/1/posts", {
-    cache: "no-store",
-  });
-  const posts = await response.json();
+  const response = await api.get("/posts");
+  const posts = response.data;
 
   return (
     <main className="flex flex-col min-h-screen p-4 bg-gradient-to-b from-gray-100 to-gray-300">
