@@ -45,7 +45,7 @@ export default function Search() {
         }}
       />
       {searchResults.length > 0 && (
-        <div className="absolute left-0 right-0 mt-1 bg-gray-100 shadow-lg rounded-lg p-4 text-gray-700 z-10">
+        <div className="absolute left-0 right-0 mt-1 bg-gray-100 shadow-lg rounded-lg p-4 text-gray-700 z-10 h-52 overflow-y-scroll">
           <ul>
             {searchResults.map((post) => (
               <Link

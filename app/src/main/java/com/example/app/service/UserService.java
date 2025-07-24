@@ -1,11 +1,13 @@
 package com.example.app.service;
 
+import java.net.ResponseCache;
 import java.util.List;
 import java.util.Optional;
 import java.util.stream.Collectors;
 
 import org.modelmapper.ModelMapper;
 import org.springframework.beans.factory.annotation.Autowired;
+import org.springframework.http.ResponseEntity;
 import org.springframework.stereotype.Service;
 
 import com.example.app.DTO.UserDTO;
@@ -39,7 +41,13 @@ public class UserService {
 	}
 
 	public Optional<UserDTO> getUser(long id) {
-		return userRepository.findById(id).map(user -> modelMapper.map(user, UserDTO.class));
+
+		Optional<User> userOptional = userRepository.findById(id);
+		if (userOptional.isEmpty()) {
+			throw new RuntimeException("user not found");
+		}
+
+		return userOptional.map(user -> modelMapper.map(user, UserDTO.class));
 	}
 
 }

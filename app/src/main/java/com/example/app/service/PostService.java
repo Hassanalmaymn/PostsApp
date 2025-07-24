@@ -1,21 +1,24 @@
 package com.example.app.service;
 
+import java.util.List;
+import java.util.Optional;
+import java.util.stream.Collectors;
+import java.util.stream.Stream;
+
+import org.springframework.data.domain.Page;
+import org.modelmapper.ModelMapper;
+import org.springframework.beans.factory.annotation.Autowired;
+import org.springframework.data.domain.PageRequest;
+import org.springframework.data.domain.Pageable;
+import org.springframework.data.jpa.domain.Specification;
+import org.springframework.http.ResponseEntity;
+import org.springframework.stereotype.Service;
+
 import com.example.app.DTO.PostDTO;
 import com.example.app.model.Category;
 import com.example.app.model.Post;
 import com.example.app.repository.PostRepository;
 import com.example.app.specifications.PostSpecifications;
-
-import org.modelmapper.ModelMapper;
-import org.springframework.beans.factory.annotation.Autowired;
-import org.springframework.data.jpa.domain.Specification;
-import org.springframework.http.ResponseEntity;
-import org.springframework.stereotype.Service;
-
-import java.util.List;
-import java.util.Optional;
-import java.util.stream.Collector;
-import java.util.stream.Collectors;
 
 @Service
 public class PostService {
@@ -61,9 +64,10 @@ public class PostService {
 		return postRepository.findAll(spec);
 	}
 
-	public List<PostDTO> getAllPosts() {
-		return postRepository.findAll().stream().map((post) -> modelMapper.map(post, PostDTO.class))
-				.collect(Collectors.toList());
+	public Page<PostDTO> getAllPosts(int pageNumber, int pageSize) {
+		Pageable pageable = PageRequest.of(pageNumber, pageSize);
+		Page<Post> postPage = postRepository.findAll(pageable);
+		return postPage.map((post) -> modelMapper.map(post, PostDTO.class));
 	}
 
 	public List<PostDTO> findByUserId(long id) {
@@ -84,12 +88,12 @@ public class PostService {
 	public ResponseEntity<List<Category>> getPostCategories(long post_id) {
 		Optional<Post> postOptional = postRepository.findById(post_id);
 
-		if (postOptional.isPresent()) {
-			List<Category> categories = postOptional.get().getCategories();
-			return ResponseEntity.ok(categories);
-		} else {
+		if (postOptional.isEmpty()) {
 			return ResponseEntity.notFound().build();
+
 		}
+		List<Category> categories = postOptional.get().getCategories();
+		return ResponseEntity.ok(categories);
 	}
 
 	public void deletePostById(long post_id) {

@@ -2,8 +2,10 @@ package com.example.app.exception;
 
 import java.time.LocalDateTime;
 import java.util.HashMap;
+import java.util.Locale;
 import java.util.Map;
 
+import org.springframework.context.MessageSource;
 import org.springframework.http.HttpStatus;
 import org.springframework.http.ResponseEntity;
 import org.springframework.web.bind.annotation.ExceptionHandler;
@@ -12,14 +14,18 @@ import org.springframework.web.context.request.WebRequest;
 
 @RestControllerAdvice
 public class GlobalExceptionHandler {
-	@ExceptionHandler(BadRequestException.class)
-	public ResponseEntity<Object> handleBadRequestException(BadRequestException ex, WebRequest request) {
-		return buildErrorResponse(ex.getMessage(), HttpStatus.BAD_REQUEST, request.getDescription(false));
+	private MessageSource messageSource;
+
+	public GlobalExceptionHandler(MessageSource messageSource) {
+		super();
+		this.messageSource = messageSource;
 	}
 
-	@ExceptionHandler(ResourceNotFoundException.class)
-	public ResponseEntity<Object> handleResourceNotFound(ResourceNotFoundException ex, WebRequest request) {
-		return buildErrorResponse(ex.getMessage(), HttpStatus.NOT_FOUND, request.getDescription(false));
+	@ExceptionHandler(RuntimeException.class)
+	public ResponseEntity<Object> handleRuntimeException(RuntimeException ex, WebRequest request, Locale locale) {
+		String translatedMessage = messageSource.getMessage(ex.getMessage(), null, ex.getMessage(), locale);
+
+		return buildErrorResponse(translatedMessage, HttpStatus.NOT_FOUND, request.getDescription(false));
 	}
 
 	@ExceptionHandler(Exception.class)

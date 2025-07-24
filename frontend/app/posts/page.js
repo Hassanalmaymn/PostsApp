@@ -3,24 +3,45 @@
 import PostCard from "./postCard";
 import CreateNewPostCard from "./CreateNewPostCard";
 import { useState, useEffect } from "react";
+import Pagination from "./pagination";
 import { api } from "../api/axios";
 import { Loader2 } from "lucide-react";
+const pageSize = 5;
 
 export default function PostsPage() {
   const [posts, setPosts] = useState([]);
   const [filters, setFilters] = useState([]);
   const [filteredPosts, setFilteredPosts] = useState([]);
+  const [page, setPage] = useState(0);
+  const [totalPages, setTotalPages] = useState(0);
   const [loading, setLoading] = useState(true);
+  function handlePageNumberChangeNext() {
+    console.log(page + " " + totalPages);
+    if (page >= totalPages - 1) {
+      return;
+    }
+
+    setPage((prevPageNumber) => ++prevPageNumber);
+  }
+  function handlePageNumberChangePrevious() {
+    if (page <= 0) {
+      return;
+    }
+
+    setPage((prevPageNumber) => --prevPageNumber);
+  }
 
   useEffect(() => {
     const fetchData = async () => {
       try {
         const [postsRes, filtersRes] = await Promise.all([
-          api.get("/posts"),
+          api.get(`/posts?pageNumber=${page}&pageSize=${pageSize}`),
           api.get("/categories"),
         ]);
-        setPosts(postsRes.data);
-        setFilteredPosts(postsRes.data);
+        setPosts(postsRes.data.content);
+        setFilteredPosts(postsRes.data.content);
+        setPage(postsRes.data.pageable.pageNumber);
+        setTotalPages(postsRes.data.totalPages);
         setFilters(filtersRes.data);
       } catch (err) {
         console.error("Failed to fetch data", err);
@@ -29,7 +50,7 @@ export default function PostsPage() {
       }
     };
     fetchData();
-  }, []);
+  }, [page]);
 
   const handleFilterChange = (e) => {
     const selectedCategory = e.target.value;
@@ -88,6 +109,12 @@ export default function PostsPage() {
           </div>
         )}
       </div>
+      <Pagination
+        page={page}
+        totalPages={totalPages}
+        onNext={handlePageNumberChangeNext}
+        onPrevious={handlePageNumberChangePrevious}
+      />
     </main>
   );
 }

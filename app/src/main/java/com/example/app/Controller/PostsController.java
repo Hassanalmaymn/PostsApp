@@ -4,6 +4,7 @@ import java.util.List;
 import java.util.Optional;
 
 import org.springframework.beans.factory.annotation.Autowired;
+import org.springframework.data.domain.Page;
 import org.springframework.http.ResponseEntity;
 import org.springframework.web.bind.annotation.CrossOrigin;
 import org.springframework.web.bind.annotation.GetMapping;
@@ -34,9 +35,10 @@ public class PostsController {
 		this.postService = postservices;
 	}
 
-	@GetMapping("")
-	public List<PostDTO> getAllPosts() {
-		return postService.getAllPosts();
+	@GetMapping
+	public Page<PostDTO> getAllPosts(@RequestParam(name = "pageNumber") int pageNumber,
+			@RequestParam(name = "pageSize") int pageSize) {
+		return postService.getAllPosts(pageNumber, pageSize);
 	}
 
 	@GetMapping(path = "/getUserPosts/{user_id}")

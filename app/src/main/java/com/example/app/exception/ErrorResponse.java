@@ -6,11 +6,11 @@ public class ErrorResponse {
 	private String timestamp;
 	private String path;
 
-	public ErrorResponse(int status, String message, String path) {
+	public ErrorResponse(String message, int status) {
 		this.status = status;
 		this.message = message;
 		this.timestamp = java.time.LocalDateTime.now().toString();
-		this.path = path;
+
 	}
 
 	// Getters and setters
