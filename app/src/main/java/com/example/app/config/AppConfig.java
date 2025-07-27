@@ -19,7 +19,7 @@ public class AppConfig {
 			@Override
 			public void addCorsMappings(CorsRegistry registry) {
 				registry.addMapping("/**") // Allow all paths
-						.allowedOrigins("http://localhost:3000") // Replace with your frontend
+						.allowedOrigins("http://localhost:3000/") // Replace with your frontend
 																	// origins
 						.allowedMethods("GET", "POST", "PUT", "DELETE", "OPTIONS").allowedHeaders("*")
 						.allowCredentials(true).maxAge(3600); // Cache preflight response for 1 hour

@@ -1,5 +1,5 @@
 "use client";
-
+import React from "react";
 import PageStructure from "../pageStructure";
 
 export default function Login() {
