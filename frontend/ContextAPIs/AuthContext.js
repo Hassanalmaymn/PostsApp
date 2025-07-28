@@ -20,7 +20,14 @@ export function AuthProvider({ children }) {
     role: "user",
     isAuthinticated: false,
   });
-  function login() {}
+  function login(user) {
+    setUser({
+      username: user.name,
+      role: user.role,
+      isAuthinticated: true,
+      isAdmin: user.role == "admin",
+    });
+  }
   function logout() {}
   return <AuthContext value={{ user, login, logout }}>{children}</AuthContext>;
 }

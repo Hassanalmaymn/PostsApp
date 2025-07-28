@@ -1,5 +1,7 @@
 package com.example.app.service;
 
+import java.util.Optional;
+
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.security.core.userdetails.UserDetails;
 import org.springframework.security.core.userdetails.UserDetailsService;
@@ -16,12 +18,12 @@ public class ImplUserDetailsService implements UserDetailsService {
 	private UserRepository userRepo;
 
 	public UserDetails loadUserByUsername(String username) throws UsernameNotFoundException {
-		User user = userRepo.findUserByEmail(username);
+		Optional<User> user = userRepo.findUserByEmail(username);
 
 		if (user == null) {
 			throw new UsernameNotFoundException("user not found");
 		}
-		return new UserPrincipal(user);
+		return new UserPrincipal(user.get());
 	}
 
 }

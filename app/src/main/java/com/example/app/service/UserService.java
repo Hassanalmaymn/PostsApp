@@ -9,6 +9,7 @@ import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.security.crypto.password.PasswordEncoder;
 import org.springframework.stereotype.Service;
 
+import com.example.app.DTO.PostDTO;
 import com.example.app.DTO.UserDTO;
 import com.example.app.model.User;
 import com.example.app.repository.UserRepository;
@@ -33,7 +34,6 @@ public class UserService {
 	}
 
 	public User createUser(User user) {
-		// Encode password before saving
 		user.setPassword(passwordEncoder.encode(user.getPassword()));
 		return userRepository.save(user);
 	}
@@ -50,7 +50,11 @@ public class UserService {
 		return userOptional.map(user -> modelMapper.map(user, UserDTO.class));
 	}
 
-	public Optional<User> getByEmail(String email) {
-		return Optional.ofNullable(userRepository.findUserByEmail(email));
+	public Optional<UserDTO> getByEmail(String email) {
+		Optional<User> userOptional = userRepository.findUserByEmail(email);
+		if (userOptional.isEmpty()) {
+			throw new RuntimeException("User not found");
+		}
+		return userOptional.map(user -> modelMapper.map(user, UserDTO.class));
 	}
 }

@@ -1,6 +1,6 @@
 "use client";
 
-import { Fragment, useActionState, useEffect, useState } from "react";
+import { useActionState, useEffect, useState } from "react";
 import { createPost } from "../actions/saveNewPost";
 import { api } from "../api/axios";
 
