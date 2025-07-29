@@ -34,8 +34,10 @@ export default function CreateNewPostModal({ onClose }) {
           <div className="mb-4">
             <label className="block text-sm font-medium mb-2">Title</label>
             <input type="hidden" value={user.jwt} name="jwt" />
-            {console.log(user.id)}
-            <input type="hidden" value={user.id} name="user_id" />
+            {console.log(user.role)}
+            {console.log(user.userId)}
+            {console.log(user.jwt)}
+            <input type="hidden" value={user.userId} name="user_id" />
             <input
               type="text"
               className="w-full p-2 border border-gray-300 rounded"

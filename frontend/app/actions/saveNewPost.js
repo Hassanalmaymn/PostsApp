@@ -3,7 +3,6 @@
 import { revalidatePath } from "next/cache";
 import { redirect } from "next/navigation";
 import { api } from "../api/axios";
-import { useAuth } from "@/ContextAPIs/AuthContext";
 
 export async function createPost(prevState, formData) {
   const catIds = formData.getAll("category");
@@ -23,7 +22,6 @@ export async function createPost(prevState, formData) {
   await api.post("/posts", post, {
     headers: {
       "Content-Type": "application/json",
-      Authorization: `Bearer ${jwt}`,
     },
   });
 

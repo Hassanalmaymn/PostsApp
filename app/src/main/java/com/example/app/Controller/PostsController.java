@@ -1,11 +1,12 @@
 package com.example.app.Controller;
 
 import java.util.List;
-import java.util.Optional;
 
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.data.domain.Page;
+import org.springframework.http.HttpStatus;
 import org.springframework.http.ResponseEntity;
+import org.springframework.security.access.AccessDeniedException;
 import org.springframework.web.bind.annotation.CrossOrigin;
 import org.springframework.web.bind.annotation.GetMapping;
 import org.springframework.web.bind.annotation.PathVariable;
@@ -19,8 +20,10 @@ import com.example.app.DTO.PostDTO;
 import com.example.app.exception.ResourceNotFoundException;
 import com.example.app.model.Category;
 import com.example.app.model.Post;
-
 import com.example.app.service.PostService;
+import com.example.app.service.UserPrincipal;
+
+import jakarta.persistence.EntityNotFoundException;
 
 @RestController
 @RequestMapping(path = "/posts")
@@ -64,8 +67,15 @@ public class PostsController {
 	}
 
 	@PostMapping(path = "/delete/{post_id}")
-	public void deletePost(@PathVariable("post_id") long post_id) {
-		postService.deletePostById(post_id);
+	public ResponseEntity<String> deletePost(@PathVariable("post_id") long post_id, UserPrincipal principal) {
+		try {
+			postService.deletePostByIdWithAuthorization(post_id, principal.getUsername());
+			return ResponseEntity.ok("Post deleted");
+		} catch (AccessDeniedException e) {
+			return ResponseEntity.status(HttpStatus.FORBIDDEN).body("You are not authorized to delete this post");
+		} catch (EntityNotFoundException e) {
+			return ResponseEntity.status(HttpStatus.NOT_FOUND).body("Post not found");
+		}
 	}
 
 	@GetMapping("/search")

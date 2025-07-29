@@ -8,6 +8,7 @@ import com.example.app.model.Category;
 
 public class PostDTO {
 	private long id;
+	private long user_id;
 	private String title;
 	private String content;
 	private LocalDateTime created_at;
@@ -17,13 +18,23 @@ public class PostDTO {
 		super();
 	}
 
-	public PostDTO(long id, String title, String content, LocalDateTime created_at, List<Category> categories) {
+	public PostDTO(long id, long user_id, String title, String content, LocalDateTime created_at,
+			List<Category> categories) {
 		super();
 		this.id = id;
+		this.user_id = user_id;
 		this.title = title;
 		this.content = content;
 		this.created_at = created_at;
 		this.categories = categories;
+	}
+
+	public long getUser_id() {
+		return user_id;
+	}
+
+	public void setUser_id(long user_id) {
+		this.user_id = user_id;
 	}
 
 	public String getTitle() {

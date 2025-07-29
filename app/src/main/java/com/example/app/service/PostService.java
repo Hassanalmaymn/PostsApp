@@ -3,34 +3,41 @@ package com.example.app.service;
 import java.util.List;
 import java.util.Optional;
 import java.util.stream.Collectors;
-import java.util.stream.Stream;
 
-import org.springframework.data.domain.Page;
 import org.modelmapper.ModelMapper;
 import org.springframework.beans.factory.annotation.Autowired;
+import org.springframework.data.domain.Page;
 import org.springframework.data.domain.PageRequest;
 import org.springframework.data.domain.Pageable;
 import org.springframework.data.jpa.domain.Specification;
 import org.springframework.http.ResponseEntity;
+import org.springframework.security.access.AccessDeniedException;
+import org.springframework.security.core.userdetails.User;
 import org.springframework.stereotype.Service;
 
 import com.example.app.DTO.PostDTO;
+import com.example.app.DTO.UserDTO;
+import com.example.app.exception.ResourceNotFoundException;
 import com.example.app.model.Category;
 import com.example.app.model.Post;
 import com.example.app.repository.PostRepository;
 import com.example.app.specifications.PostSpecifications;
+
+import jakarta.persistence.EntityNotFoundException;
 
 @Service
 public class PostService {
 
 	@Autowired
 	private PostRepository postRepository;
+	private UserService userService;
 	private final ModelMapper modelMapper;
 
-	public PostService(PostRepository postRepository, ModelMapper modelMapper) {
+	public PostService(PostRepository postRepository, UserService userService, ModelMapper modelMapper) {
 		super();
 		this.postRepository = postRepository;
 		this.modelMapper = modelMapper;
+		this.userService = userService;
 	}
 
 	public List<PostDTO> searchPostsByKeyword(String keyword) {
@@ -81,8 +88,15 @@ public class PostService {
 	}
 
 	public Optional<PostDTO> findPostById(long post_id) {
+		Optional<Post> Opost = postRepository.findById(post_id);
 
-		return postRepository.findById(post_id).map((post) -> modelMapper.map(post, PostDTO.class));
+		Optional<PostDTO> postOptional = Opost.map((post) -> modelMapper.map(post, PostDTO.class));
+		postOptional.get().setUser_id(Opost.get().getUser().getId());
+		if (postOptional.isEmpty()) {
+			throw new ResourceNotFoundException("post not found");
+		}
+
+		return postOptional;
 	}
 
 	public ResponseEntity<List<Category>> getPostCategories(long post_id) {
@@ -96,8 +110,30 @@ public class PostService {
 		return ResponseEntity.ok(categories);
 	}
 
-	public void deletePostById(long post_id) {
+	public void deletePostById(long post_id, UserPrincipal principal) {
 
 		postRepository.deleteById(post_id);
+	}
+
+	public void deletePostByIdWithAuthorization(long post_id, String username) {
+		// Find user by username
+		Optional<UserDTO> user = userService.getByEmail(username);
+		if (user == null) {
+			throw new AccessDeniedException("User not found");
+		}
+
+		// Find post by ID
+		Post post = postRepository.findById(post_id).orElseThrow(() -> new EntityNotFoundException("Post not found"));
+
+		// Check authorization
+		boolean isAdmin = user.get().getRole().equalsIgnoreCase("ADMIN");
+		boolean isOwner = post.getUser().getId() == user.get().getId();
+
+		if (isAdmin || isOwner) {
+			postRepository.deleteById(post_id);
+		} else {
+			throw new AccessDeniedException("Not authorized");
+		}
+
 	}
 }

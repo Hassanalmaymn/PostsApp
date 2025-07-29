@@ -1,23 +1,19 @@
 package com.example.app.Controller;
 
 import java.util.HashMap;
-import java.util.List;
 import java.util.Map;
 import java.util.Optional;
 
 import javax.naming.AuthenticationException;
 
-import org.modelmapper.ModelMapper;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.http.ResponseEntity;
-import org.springframework.security.access.prepost.PreAuthorize;
 import org.springframework.security.authentication.AuthenticationManager;
 import org.springframework.security.authentication.UsernamePasswordAuthenticationToken;
 import org.springframework.security.core.Authentication;
 import org.springframework.security.core.userdetails.UserDetails;
 import org.springframework.security.core.userdetails.UsernameNotFoundException;
 import org.springframework.web.bind.annotation.GetMapping;
-import org.springframework.web.bind.annotation.PathVariable;
 import org.springframework.web.bind.annotation.PostMapping;
 import org.springframework.web.bind.annotation.RequestBody;
 import org.springframework.web.bind.annotation.RestController;
@@ -30,7 +26,9 @@ import com.example.app.service.ImplUserDetailsService;
 import com.example.app.service.JWTService;
 import com.example.app.service.UserService;
 
+import jakarta.servlet.http.Cookie;
 import jakarta.servlet.http.HttpServletRequest;
+import jakarta.servlet.http.HttpServletResponse;
 
 @RestController
 public class UserController {
@@ -50,17 +48,24 @@ public class UserController {
 	}
 
 	@PostMapping("/login")
-	public ResponseEntity<?> login(@RequestBody LoginRequest request, HttpServletRequest httpRequest)
-			throws AuthenticationException, UsernameNotFoundException {
+	public ResponseEntity<?> login(@RequestBody LoginRequest request, HttpServletRequest httpRequest,
+			HttpServletResponse response) throws AuthenticationException, UsernameNotFoundException {
 		UsernamePasswordAuthenticationToken token = new UsernamePasswordAuthenticationToken(request.getEmail(),
 				request.getPassword());
+		UserDetails user = implUserDetailsService.loadUserByUsername(request.getEmail());
+		String JWT = jwtService.generateToken(user);
+		Cookie cookie = new Cookie("jwt", JWT);
+		cookie.setHttpOnly(true);
+		cookie.setSecure(false);
+		cookie.setPath("/");
+		cookie.setMaxAge(24 * 60 * 60); // 1 day
+		response.addCookie(cookie);
 
 		Authentication auth = authenticationManager.authenticate(token);
 		if (!auth.isAuthenticated()) {
 			return (ResponseEntity<?>) ResponseEntity.notFound();
 		}
-		UserDetails user = implUserDetailsService.loadUserByUsername(request.getEmail());
-		String JWT = jwtService.generateToken(user);
+
 		Optional<UserDTO> userDTO = userService.getByEmail(request.getEmail());
 		Map<String, Object> responseBody = new HashMap<>();
 		responseBody.put("jwt", JWT);
