@@ -3,8 +3,10 @@
 import { useActionState, useEffect, useState } from "react";
 import { createPost } from "../actions/saveNewPost";
 import { api } from "../api/axios";
+import { useAuth } from "@/ContextAPIs/AuthContext";
 
 export default function CreateNewPostModal({ onClose }) {
+  const { user } = useAuth();
   const [state, formAction] = useActionState(createPost, null);
   const [selectedCategory, setSelectedCategory] = useState([]);
   const [categories, setCategories] = useState([]);
@@ -30,6 +32,7 @@ export default function CreateNewPostModal({ onClose }) {
         <form action={formAction}>
           <div className="mb-4">
             <label className="block text-sm font-medium mb-2">Title</label>
+            <input type="hidden" value={user.jwt} name="jwt" required />
             <input
               type="text"
               className="w-full p-2 border border-gray-300 rounded"

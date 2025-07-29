@@ -1,24 +1,25 @@
+// actions/loginAction.js
+"use client";
+
 import { api } from "../api/axios";
 
 export async function loginAction(formData) {
   const email = formData.get("email");
   const password = formData.get("password");
 
+  if (!email || !password) {
+    return { error: "Email and password are required." };
+  }
+
   try {
-    const loginResponse = await api.post(
+    const response = await api.post(
       "/login",
       { email, password },
-      {
-        withCredentials: true,
-        headers: {
-          "Content-Type": "application/json",
-        },
-      }
+      { withCredentials: true }
     );
 
-    return loginResponse.data;
+    return { user: response.data.user, jwt: response.data.jwt };
   } catch (err) {
-    console.error("Login failed:", err?.response?.data || err.message);
-    return { error: "Invalid credentials or server error." };
+    return { error: err?.response?.data?.message || "Login failed." };
   }
 }

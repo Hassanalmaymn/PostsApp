@@ -21,7 +21,7 @@ export default function Login() {
     if (result.error) {
       setError(result.error);
     } else if (result.user) {
-      login(result.user);
+      login(result.user, result.jwt);
     }
   }
 

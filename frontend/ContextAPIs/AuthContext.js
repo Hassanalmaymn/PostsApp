@@ -3,6 +3,7 @@ import { createContext, useContext, useState } from "react";
 
 const AuthContext = createContext({
   user: {
+    jwt: "",
     username: "",
     role: "user",
     isAuthinticated: false,
@@ -20,12 +21,14 @@ export function AuthProvider({ children }) {
     role: "user",
     isAuthinticated: false,
   });
-  function login(user) {
+  function login(user, jwt) {
+    console.log(user.name + "__" + user.role + "==" + jwt);
     setUser({
+      jwt,
       username: user.name,
       role: user.role,
       isAuthinticated: true,
-      isAdmin: user.role == "admin",
+      isAdmin: user.role == "ROLE_ADMIN",
     });
   }
   function logout() {}
