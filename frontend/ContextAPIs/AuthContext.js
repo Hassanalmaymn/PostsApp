@@ -22,9 +22,10 @@ export function AuthProvider({ children }) {
     isAuthinticated: false,
   });
   function login(user, jwt) {
-    console.log(user.name + "__" + user.role + "==" + jwt);
+    console.log(user.name + "__" + user.role + "==" + jwt + " -- " + user.id);
+    localStorage.setItem("jwt", jwt);
     setUser({
-      jwt,
+      userId: user.id,
       username: user.name,
       role: user.role,
       isAuthinticated: true,

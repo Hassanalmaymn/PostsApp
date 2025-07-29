@@ -1,4 +1,3 @@
-// actions/loginAction.js
 "use client";
 
 import { api } from "../api/axios";

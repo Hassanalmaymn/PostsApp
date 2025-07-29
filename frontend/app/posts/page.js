@@ -6,6 +6,7 @@ import { useState, useEffect } from "react";
 import Pagination from "./pagination";
 import { api } from "../api/axios";
 import { Loader2 } from "lucide-react";
+import { useAuth } from "@/ContextAPIs/AuthContext";
 const pageSize = 5;
 
 export default function PostsPage() {
@@ -15,6 +16,7 @@ export default function PostsPage() {
   const [page, setPage] = useState(0);
   const [totalPages, setTotalPages] = useState(0);
   const [loading, setLoading] = useState(true);
+  const { isAuthorized } = useAuth();
   function handlePageNumberChangeNext() {
     console.log(page + " " + totalPages);
     if (page >= totalPages - 1) {
@@ -96,7 +98,7 @@ export default function PostsPage() {
           </div>
         ) : (
           <div className="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-3 gap-6">
-            <CreateNewPostCard />
+            {isAuthorized && <CreateNewPostCard />}
             {filteredPosts.length === 0 ? (
               <div className="col-span-full text-center text-gray-500 text-lg mt-8">
                 No posts found for the selected category.

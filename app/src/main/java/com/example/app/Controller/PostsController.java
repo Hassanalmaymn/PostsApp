@@ -68,7 +68,6 @@ public class PostsController {
 		postService.deletePostById(post_id);
 	}
 
-	@CrossOrigin(origins = "http://localhost:3000")
 	@GetMapping("/search")
 	public List<PostDTO> searchByKeyword(@RequestParam(name = "keyword", required = false) String keyword) {
 
