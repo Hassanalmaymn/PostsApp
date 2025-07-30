@@ -49,8 +49,8 @@ public class PostsController {
 		return postService.findByUserId(id);
 	}
 
-	@CrossOrigin(origins = "http://localhost:3000")
-	@PostMapping("")
+
+	@PostMapping("/create")
 	public void saveNewPost(@RequestBody Post post) {
 		postService.save(post);
 	}

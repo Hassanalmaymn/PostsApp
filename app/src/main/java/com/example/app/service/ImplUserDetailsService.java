@@ -20,7 +20,7 @@ public class ImplUserDetailsService implements UserDetailsService {
 	public UserDetails loadUserByUsername(String username) throws UsernameNotFoundException {
 		Optional<User> user = userRepo.findUserByEmail(username);
 
-		if (user == null) {
+		if (user.isEmpty()) {
 			throw new UsernameNotFoundException("user not found");
 		}
 		return new UserPrincipal(user.get());

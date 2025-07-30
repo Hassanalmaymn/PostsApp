@@ -1,5 +1,6 @@
 package com.example.app.Controller;
 
+import java.time.Duration;
 import java.util.HashMap;
 import java.util.Map;
 import java.util.Optional;
@@ -7,6 +8,8 @@ import java.util.Optional;
 import javax.naming.AuthenticationException;
 
 import org.springframework.beans.factory.annotation.Autowired;
+import org.springframework.http.HttpHeaders;
+import org.springframework.http.ResponseCookie;
 import org.springframework.http.ResponseEntity;
 import org.springframework.security.authentication.AuthenticationManager;
 import org.springframework.security.authentication.UsernamePasswordAuthenticationToken;
@@ -54,12 +57,22 @@ public class UserController {
 				request.getPassword());
 		UserDetails user = implUserDetailsService.loadUserByUsername(request.getEmail());
 		String JWT = jwtService.generateToken(user);
-		Cookie cookie = new Cookie("jwt", JWT);
-		cookie.setHttpOnly(true);
-		cookie.setSecure(false);
-		cookie.setPath("/");
-		cookie.setMaxAge(24 * 60 * 60); // 1 day
-		response.addCookie(cookie);
+//		Cookie cookie = new Cookie("jwt", JWT);
+//		cookie.setHttpOnly(true);
+//		cookie.setSecure(false);
+//
+//		cookie.setPath("/");
+//		cookie.setMaxAge(24 * 60 * 60); // 1 day
+//		response.addCookie(cookie);
+		ResponseCookie cookie = ResponseCookie.from("jwt", JWT)
+				.httpOnly(true)
+				.secure(false) // true in prod
+				.path("/")
+				.maxAge(Duration.ofDays(1))
+				.sameSite("lax")
+				.build();
+
+		response.setHeader(HttpHeaders.SET_COOKIE, cookie.toString());
 
 		Authentication auth = authenticationManager.authenticate(token);
 		if (!auth.isAuthenticated()) {
