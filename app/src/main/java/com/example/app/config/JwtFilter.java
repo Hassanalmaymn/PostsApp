@@ -2,6 +2,7 @@ package com.example.app.config;
 
 import java.io.IOException;
 
+import ch.qos.logback.core.net.SyslogOutputStream;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.context.annotation.Lazy;
 import org.springframework.security.authentication.UsernamePasswordAuthenticationToken;
@@ -42,6 +43,19 @@ public class JwtFilter extends OncePerRequestFilter {
 			username = jwtService.extractUserName(token);
 			List<String> roles = jwtService.extractRoles(token);
 		}
+
+//		if (request.getCookies() != null) {
+//			for (jakarta.servlet.http.Cookie cookie : request.getCookies()) {
+//				if ("jwt".equals(cookie.getName())) {
+//					token = cookie.getValue();
+//					System.out.println(token);
+//					username = jwtService.extractUserName(token);
+//					System.out.println(username);
+//					List<String> roles = jwtService.extractRoles(token);
+//					break;
+//				}
+//			}
+//		}
 		if (username != null && SecurityContextHolder.getContext().getAuthentication() == null) {
 			UserDetails userDetails = context.getBean(UserDetailsService.class).loadUserByUsername(username);
 			if (jwtService.validateToken(token, userDetails)) {

@@ -19,9 +19,10 @@ export async function createPost(prevState, formData) {
     categories: catIds.map((id) => ({ id: Number(id) })),
   };
 
-  await api.post("/posts", post, {
+  await api.post("/posts/create", post, {
     headers: {
       "Content-Type": "application/json",
+      Authorization:`Bearer ${jwt}`
     },
   });
 
