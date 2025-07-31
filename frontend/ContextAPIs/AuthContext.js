@@ -1,5 +1,6 @@
 "use client";
 import { createContext, useContext, useEffect, useState } from "react";
+import { api } from "../app/api/axios";
 
 const AuthContext = createContext({
   user: {
@@ -70,7 +71,12 @@ export function AuthProvider({ children }) {
     console.log(user);
   }
 
-  function logout() {
+  async function logout() {
+    await api.post("/logout", null, {
+      headers: {
+        Authorization: `Bearer ${user.jwt}`,
+      },
+    });
     localStorage.removeItem("jwt");
     localStorage.removeItem("user");
     setUser({

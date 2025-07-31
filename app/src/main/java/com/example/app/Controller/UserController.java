@@ -94,9 +94,14 @@ public class UserController {
 
 	}
 
-	@GetMapping("/logout")
-	public ResponseEntity<?> logout(HttpServletRequest request) {
-		request.getSession().invalidate();
+	@PostMapping("/logout")
+	public ResponseEntity<?> logout(HttpServletRequest request,HttpServletResponse response) {
+		Cookie cookie = new Cookie("access_token", null);
+		cookie.setHttpOnly(true);
+		cookie.setSecure(false); // if using HTTPS
+		cookie.setPath("/");
+		cookie.setMaxAge(0); // delete it
+		response.addCookie(cookie);
 		return ResponseEntity.ok("Logged out");
 	}
 //
