@@ -17,6 +17,7 @@ export async function loginAction(formData) {
       { withCredentials: true }
     );
 
+    console.log("Login response:", response.data.user.roles);
     return { user: response.data.user, jwt: response.data.jwt };
   } catch (err) {
     return { error: err?.response?.data?.message || "Login failed." };

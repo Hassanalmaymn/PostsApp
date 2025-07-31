@@ -1,5 +1,6 @@
 package com.example.app.Controller;
 
+import org.springframework.security.access.prepost.PreAuthorize;
 import org.springframework.web.bind.annotation.GetMapping;
 import org.springframework.web.bind.annotation.PathVariable;
 import org.springframework.web.bind.annotation.PostMapping;
@@ -16,12 +17,12 @@ import java.util.List;
 @RestController
 @RequestMapping(path = "/categories")
 public class CategoriesController {
-	private final CategoryService categoryService;
+    private final CategoryService categoryService;
 
-	public CategoriesController(CategoryService categoryService) {
-		super();
-		this.categoryService = categoryService;
-	}
+    public CategoriesController(CategoryService categoryService) {
+        super();
+        this.categoryService = categoryService;
+    }
 
 //	@GetMapping("/categories/{category_id}/getPosts")
 //	public ResponseEntity<List<Post>> getAllPostsForTheCategory(@PathVariable("category_id") long category_id) {
@@ -34,23 +35,25 @@ public class CategoriesController {
 //		}
 //	}
 
-	@GetMapping
-	public List<Category> getAllCategories() {
-		return categoryService.getAllCategories();
-	}
+    @GetMapping
+    public List<Category> getAllCategories() {
+        return categoryService.getAllCategories();
+    }
 
-	@PostMapping
-	public void addNewCategory(@RequestBody Category category) {
-		categoryService.addNewCategory(category);
-	}
+    @PostMapping
+    @PreAuthorize("hasAuthority('CATEGORY_CREATE')")
+    public void addNewCategory(@RequestBody Category category) {
+        categoryService.addNewCategory(category);
+    }
 
-	@GetMapping("/{post_id}")
-	public List<CategoryDTO> getAllCategories(@PathVariable(name = "post_id") long postId) {
-		return categoryService.searchCategoriesByPostId(postId);
-	}
+    @GetMapping("/{post_id}")
+    public List<CategoryDTO> getAllCategories(@PathVariable(name = "post_id") long postId) {
+        return categoryService.searchCategoriesByPostId(postId);
+    }
 
-	@PostMapping("/{category_id}/delete")
-	public void deleteCategory(@PathVariable("category_id") long category_id) {
-		categoryService.deleteCategory(category_id);
-	}
+    @PostMapping("/{category_id}/delete")
+    @PreAuthorize("hasAuthority('CATEGORY_DELETE')")
+    public void deleteCategory(@PathVariable("category_id") long category_id) {
+        categoryService.deleteCategory(category_id);
+    }
 }

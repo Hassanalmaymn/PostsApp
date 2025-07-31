@@ -4,7 +4,7 @@ import { useState } from "react";
 import PageStructure from "../pageStructure";
 import { loginAction } from "../actions/loginAction";
 import { useAuth } from "@/ContextAPIs/AuthContext";
-import { useRouter } from "next/navigation";
+import { redirect, useRouter } from "next/navigation";
 
 export default function Login() {
   const [showPassword, setShowPassword] = useState(false);
@@ -17,11 +17,11 @@ export default function Login() {
     const formData = new FormData(e.target);
 
     const result = await loginAction(formData);
-    console.log(result);
     if (result.error) {
       setError(result.error);
     } else if (result.user) {
       login(result.user, result.jwt);
+      redirect("/");
     }
   }
 

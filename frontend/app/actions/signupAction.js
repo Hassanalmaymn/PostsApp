@@ -18,14 +18,15 @@ export default async function SignupAction(prevState, formData) {
     password,
   };
   console.log("user", user);
-  
+
   try {
     const response = await api.post("/register", user, {
       headers: {
         "Content-Type": "application/json",
       },
     });
-    return { success: true, message: response.data.message };
+
+    return response.data;
   } catch (err) {
     return { error: err?.response?.data?.message || "Signup failed." };
   }

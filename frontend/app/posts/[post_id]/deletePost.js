@@ -2,28 +2,31 @@
 import { Trash2 } from "lucide-react";
 import { api } from "@/app/api/axios";
 import { useAuth } from "@/ContextAPIs/AuthContext";
+import { redirect } from "next/navigation";
 
 export default function DeletePost({ post_id, user_id }) {
   const { user } = useAuth();
-  console.log(user.userId);
-  console.log(user_id);
-  console.log(user.jwt);
 
-  
-
-  if (!(user && user.isAdmin && user.userId === user_id)) {
+  if (!user) {
     return;
   }
 
-  console.log(post_id);
+  if (!user.isAdmin && user.userId !== user_id) {
+    return;
+  }
 
   async function handleDeletePost() {
-    api.post(`/posts/delete/${post_id}`, null, {
+    const response = await api.post(`/posts/delete/${post_id}`, null, {
       headers: {
         "Content-Type": "application/json",
         Authorization: `Bearer ${user.jwt}`,
       },
     });
+    if (response.status === 200) {
+      redirect("/posts");
+    } else {
+      console.error("Failed to delete post:", response.data);
+    }
   }
 
   return (

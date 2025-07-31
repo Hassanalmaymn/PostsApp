@@ -99,12 +99,12 @@ public class UserController {
 		request.getSession().invalidate();
 		return ResponseEntity.ok("Logged out");
 	}
-
-	@PostMapping("/getUserByEmail")
-	public Optional<UserDTO> getUserByEmail(@RequestBody Email email) {
-		System.out.println(email);
-		return userService.getByEmail(email.getEmail());
-
-	}
+//
+//	@PostMapping("/getUserByEmail")
+//	public Optional<UserDTO> getUserByEmail(@RequestBody Email email) {
+//		System.out.println(email);
+//		return userService.getByEmail(email.getEmail());
+//
+//	}
 
 }

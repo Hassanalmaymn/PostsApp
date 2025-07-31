@@ -1,5 +1,5 @@
 CREATE TABLE role (
-  id BIGINT PRIMARY KEY,
+  id BIGINT PRIMARY KEY AUTO_INCREMENT,
   name VARCHAR(50)
 );
 CREATE TABLE user_role(
@@ -11,7 +11,7 @@ PRIMARY KEY (user_id, role_id),
 
 );
 CREATE TABLE privilege (
-id BIGINT PRIMARY KEY,
+id BIGINT PRIMARY KEY AUTO_INCREMENT,
 privilege VARCHAR(50)
 );
 CREATE TABLE role_privilege(

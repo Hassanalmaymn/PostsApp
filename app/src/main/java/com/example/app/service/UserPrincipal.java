@@ -1,7 +1,6 @@
 package com.example.app.service;
 
 import java.util.Collection;
-import java.util.Collections;
 import java.util.stream.Collectors;
 
 import org.springframework.security.core.GrantedAuthority;
@@ -24,8 +23,8 @@ public class UserPrincipal implements UserDetails {
         return user.getRoles().stream()
                 .flatMap(role -> role.getPrivileges().stream())
                 .map(privilege -> {
-                    System.out.println(privilege.getName());
-                    return new SimpleGrantedAuthority(privilege.getName());
+                    System.out.println(privilege.getPrivilege());
+                    return new SimpleGrantedAuthority(privilege.getPrivilege());
                 })
                 .collect(Collectors.toSet());
     }

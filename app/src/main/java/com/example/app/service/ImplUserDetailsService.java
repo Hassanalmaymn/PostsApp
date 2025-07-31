@@ -2,6 +2,7 @@ package com.example.app.service;
 
 import java.util.Optional;
 
+import jakarta.transaction.Transactional;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.security.core.userdetails.UserDetails;
 import org.springframework.security.core.userdetails.UserDetailsService;
@@ -14,16 +15,18 @@ import com.example.app.repository.UserRepository;
 @Service
 public class ImplUserDetailsService implements UserDetailsService {
 
-	@Autowired
-	private UserRepository userRepo;
+    @Autowired
+    private UserRepository userRepo;
 
-	public UserDetails loadUserByUsername(String username) throws UsernameNotFoundException {
-		Optional<User> user = userRepo.findUserByEmail(username);
+    @Transactional
+    public UserDetails loadUserByUsername(String username) throws UsernameNotFoundException {
+        User user = userRepo.findUserByEmail(username)
+                .orElseThrow(() -> new UsernameNotFoundException("User not found"));
 
-		if (user.isEmpty()) {
-			throw new UsernameNotFoundException("user not found");
-		}
-		return new UserPrincipal(user.get());
-	}
+        // 🔑 Force loading of roles and their privileges
+        user.getRoles().forEach(role -> role.getPrivileges().size());
+
+        return new UserPrincipal(user);
+    }
 
 }

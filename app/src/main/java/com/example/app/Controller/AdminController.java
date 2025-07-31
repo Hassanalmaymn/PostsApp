@@ -15,29 +15,30 @@ import com.example.app.service.UserService;
 
 @RestController
 @RequestMapping("admin")
-@PreAuthorize("hasRole('ADMIN')")
 public class AdminController {
-	private final UserService userService;
+    private final UserService userService;
 
-	public AdminController(UserService userService) {
-		super();
-		this.userService = userService;
-	}
+    public AdminController(UserService userService) {
+        super();
+        this.userService = userService;
+    }
 
-	@GetMapping("/users")
-	@PreAuthorize("hasRole('ADMIN')")
-	public List<UserDTO> retrieveUsers() {
-		return userService.retrieveUsers();
-	}
+    @GetMapping("/users")
+    @PreAuthorize("hasAuthority('VIEW_ALL_USERS')")
+    public List<UserDTO> retrieveUsers() {
+        return userService.retrieveUsers();
+    }
 
-	@GetMapping("users/{id}")
-	public Optional<UserDTO> getUser(@PathVariable("id") long id) {
-		return userService.getUser(id);
-	}
+    @GetMapping("users/{id}")
+    @PreAuthorize("hasAuthority('VIEW_ALL_USERS')")
+    public Optional<UserDTO> getUser(@PathVariable("id") long id) {
+        return userService.getUser(id);
+    }
 
-	@PostMapping("/users/{id}/deleteUser")
-	public void deleteUser(@PathVariable("id") long id) {
-		userService.deleteUser(id);
-	}
+    @PostMapping("/users/{id}/deleteUser")
+    @PreAuthorize("hasAuthority('USER_DELETE')")
+    public void deleteUser(@PathVariable("id") long id) {
+        userService.deleteUser(id);
+    }
 
 }

@@ -1,10 +1,20 @@
 "use client";
 import PageStructure from "../pageStructure";
-import { useActionState } from "react"
-import  SignupAction  from "../actions/signupAction";
+import { useActionState, useEffect } from "react";
+import SignupAction from "../actions/signupAction";
+import { useAuth } from "@/ContextAPIs/AuthContext";
+import { redirect } from "next/navigation";
 
 export default function Signup() {
+  const { login } = useAuth();
   const [state, formAction] = useActionState(SignupAction, null);
+  console.log("state", state);
+  useEffect(() => {
+    if (state && !state.error) {
+      login(state);
+      redirect("/");
+    }
+  }, [state, login]);
 
   return (
     <PageStructure>
@@ -83,8 +93,8 @@ export default function Signup() {
             Create Account
           </button>
 
-          {state && (
-            <p className="text-red-600 text-sm mt-2">{state.message}</p>
+          {state && state.error && (
+            <p className="text-red-600 text-sm mt-2">{state.error}</p>
           )}
         </form>
       </div>

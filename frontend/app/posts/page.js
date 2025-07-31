@@ -7,6 +7,7 @@ import Pagination from "./pagination";
 import { api } from "../api/axios";
 import { Loader2 } from "lucide-react";
 import { useAuth } from "@/ContextAPIs/AuthContext";
+import AddCategoryModal from "./addCategory";
 const pageSize = 5;
 
 export default function PostsPage() {
@@ -16,6 +17,7 @@ export default function PostsPage() {
   const [page, setPage] = useState(0);
   const [totalPages, setTotalPages] = useState(0);
   const [loading, setLoading] = useState(true);
+  const [addCategory, setAddCategory] = useState(false);
   const { user } = useAuth();
   function handlePageNumberChangeNext() {
     console.log(page + " " + totalPages);
@@ -31,6 +33,9 @@ export default function PostsPage() {
     }
 
     setPage((prevPageNumber) => --prevPageNumber);
+  }
+  function handleAddCategory() {
+    setAddCategory((prev) => !prev);
   }
 
   useEffect(() => {
@@ -78,7 +83,7 @@ export default function PostsPage() {
           Explore Posts
         </h1>
 
-        <div className="flex justify-center mb-6">
+        <div className="flex flex-row justify-center mb-6">
           <select
             className="w-full sm:w-1/2 md:w-1/3 px-4 py-2 rounded-xl border border-gray-400 bg-white shadow-sm focus:outline-none focus:ring-2 focus:ring-blue-400"
             onChange={handleFilterChange}
@@ -90,6 +95,18 @@ export default function PostsPage() {
               </option>
             ))}
           </select>
+          <div className="ml-4">
+            <button
+              className="px-4 py-2 rounded-xl border border-gray-700 bg-gray-400 shadow-sm hover:bg-gray-500"
+              onClick={handleAddCategory}
+            >
+              Add new category
+            </button>
+            <AddCategoryModal
+              isOpen={addCategory}
+              onClose={handleAddCategory}
+            />
+          </div>
         </div>
 
         {loading ? (
@@ -99,7 +116,7 @@ export default function PostsPage() {
         ) : (
           <div className="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-3 gap-6">
             {user.isAuthinticated && <CreateNewPostCard />}
-        
+
             {filteredPosts.length === 0 ? (
               <div className="col-span-full text-center text-gray-500 text-lg mt-8">
                 No posts found for the selected category.

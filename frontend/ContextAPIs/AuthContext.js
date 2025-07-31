@@ -6,7 +6,7 @@ const AuthContext = createContext({
     jwt: "",
     userId: "",
     username: "",
-    role: "",
+    roles: [],
     isAuthinticated: false,
     isAdmin: false,
   },
@@ -23,7 +23,7 @@ export function AuthProvider({ children }) {
     jwt: "",
     userId: "",
     username: "",
-    role: "",
+    roles: [],
     isAuthinticated: false,
     isAdmin: false,
   });
@@ -39,15 +39,14 @@ export function AuthProvider({ children }) {
 
         console.log(parsedUser);
         console.log("+++_D_D__D__D__");
-        
 
         setUser({
           jwt,
           userId: parsedUser.userId,
           username: parsedUser.name,
-          role: parsedUser.role,
+          roles: parsedUser.roles,
           isAuthinticated: true,
-          isAdmin: parsedUser.role === "ROLE_ADMIN",
+          isAdmin: parsedUser.roles.some((role) => role.name === "ROLE_ADMIN"),
         });
       } catch (e) {
         console.error("Failed to parse stored user", e);
@@ -64,9 +63,9 @@ export function AuthProvider({ children }) {
       jwt: jwt,
       userId: fetchedUser.id,
       username: fetchedUser.name,
-      role: fetchedUser.role,
+      roles: fetchedUser.roles,
       isAuthinticated: true,
-      isAdmin: user.role === "ROLE_ADMIN",
+      isAdmin: fetchedUser.roles.some((role) => role.name === "ROLE_ADMIN"),
     });
     console.log(user);
   }
@@ -78,7 +77,7 @@ export function AuthProvider({ children }) {
       jwt: "",
       userId: "",
       username: "",
-      role: "",
+      roles: [],
       isAuthinticated: false,
       isAdmin: false,
     });
