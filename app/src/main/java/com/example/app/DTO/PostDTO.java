@@ -11,6 +11,7 @@ public class PostDTO {
 	private long user_id;
 	private String title;
 	private String content;
+	private String imageUrl;
 	private LocalDateTime created_at;
 	private List<Category> categories;
 
@@ -18,15 +19,24 @@ public class PostDTO {
 		super();
 	}
 
-	public PostDTO(long id, long user_id, String title, String content, LocalDateTime created_at,
-			List<Category> categories) {
+	public PostDTO(long id, long user_id, String title, String content, String imageUrl, LocalDateTime created_at,
+                   List<Category> categories) {
 		super();
 		this.id = id;
 		this.user_id = user_id;
 		this.title = title;
 		this.content = content;
-		this.created_at = created_at;
+        this.imageUrl = imageUrl;
+        this.created_at = created_at;
 		this.categories = categories;
+	}
+
+	public String getImageUrl() {
+		return imageUrl;
+	}
+
+	public void setImageUrl(String imageUrl) {
+		this.imageUrl = imageUrl;
 	}
 
 	public long getUser_id() {

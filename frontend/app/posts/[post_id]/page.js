@@ -17,6 +17,8 @@ export default async function PostsPage({ params }) {
             <h2 className="text-2xl font-bold">{post.title}</h2>
             <p className="mt-2">{post.content}</p>
           </div>
+          <img src={post.imageUrl} alt={post.title} className="mt-4 rounded-lg" />
+          {console.log(post)}
           <DeletePost post_id={post_id} user_id={post.user_id} />
         </div>
       </div>

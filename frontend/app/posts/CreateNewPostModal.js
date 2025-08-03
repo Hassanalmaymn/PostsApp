@@ -1,16 +1,20 @@
 "use client";
 
-import { useActionState, useEffect, useState } from "react";
+import { useActionState, useEffect, useState, useRef } from "react";
 import { createPost } from "../actions/saveNewPost";
 import { api } from "../api/axios";
 import { useAuth } from "@/ContextAPIs/AuthContext";
 
 export default function CreateNewPostModal({ onClose }) {
   const { user } = useAuth();
+  const ref = useRef();
 
   const [state, formAction] = useActionState(createPost, null);
   const [selectedCategory, setSelectedCategory] = useState([]);
   const [categories, setCategories] = useState([]);
+  function handleUploadImage() {
+    ref.current.click();
+  }
 
   useEffect(() => {
     async function fetchCategories() {
@@ -34,9 +38,6 @@ export default function CreateNewPostModal({ onClose }) {
           <div className="mb-4">
             <label className="block text-sm font-medium mb-2">Title</label>
             <input type="hidden" value={user.jwt} name="jwt" />
-            {console.log(user.role)}
-            {console.log(user.userId)}
-            {console.log(user.jwt)}
             <input type="hidden" value={user.userId} name="user_id" />
             <input
               type="text"
@@ -54,6 +55,12 @@ export default function CreateNewPostModal({ onClose }) {
               name="content"
               required
             ></textarea>
+          </div>
+          <div className="mb-4">
+            <input type="file" accept="image/*" name="image" ref={ref} className="hidden" />
+            <button onClick={handleUploadImage} type="button">
+              Upload image
+            </button>
           </div>
           <div className="mb-4">
             <label className="block text-sm font-semibold mb-2 text-gray-700">
@@ -83,6 +90,7 @@ export default function CreateNewPostModal({ onClose }) {
                       }
                     }}
                   />
+
                   <span className="text-sm text-gray-800">
                     {category.category_name}
                   </span>

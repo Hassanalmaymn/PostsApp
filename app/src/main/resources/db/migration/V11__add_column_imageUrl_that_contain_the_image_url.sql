@@ -1,0 +1,2 @@
+ALTER TABLE post
+ADD image_url VARCHAR(255);

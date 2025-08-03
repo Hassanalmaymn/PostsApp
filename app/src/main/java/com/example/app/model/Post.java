@@ -17,6 +17,7 @@ public class Post {
     private Long id;
     private String title;
     private String content;
+    private String imageUrl;
     @CreatedDate
     private LocalDateTime created_at;
     @ManyToOne
@@ -39,11 +40,20 @@ public class Post {
         super();
     }
 
-    public Post(Long id, String title, String content, LocalDateTime created_at, User user) {
+    public String getImageUrl() {
+        return imageUrl;
+    }
+
+    public void setImageUrl(String imageUrl) {
+        this.imageUrl = imageUrl;
+    }
+
+    public Post(Long id, String title, String content, String imageUrl, LocalDateTime created_at, User user) {
         super();
         this.id = id;
         this.title = title;
         this.content = content;
+        this.imageUrl = imageUrl;
         this.created_at = created_at;
         this.user = user;
 
