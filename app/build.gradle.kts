@@ -20,6 +20,11 @@ repositories {
 
 dependencies {
 	implementation("org.springframework.boot:spring-boot-starter-data-jpa")
+	implementation("io.github.cdimascio:dotenv-java:3.0.0")
+	implementation("software.amazon.awssdk:s3:2.25.30")
+	implementation("software.amazon.awssdk:auth:2.25.30")
+	implementation("software.amazon.awssdk:regions:2.25.30")
+	implementation("net.sf.jasperreports:jasperreports:7.0.3")
 	implementation("org.springframework.boot:spring-boot-starter-web")
 	implementation("org.springframework.boot:spring-boot-starter-security")
 	implementation("io.jsonwebtoken:jjwt-api:0.11.5")

@@ -1,7 +1,9 @@
 package com.example.app.Controller;
 
+import java.io.IOException;
 import java.util.List;
 
+import com.example.app.service.S3Service;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.data.domain.Page;
 import org.springframework.http.HttpStatus;
@@ -26,18 +28,21 @@ import com.example.app.service.PostService;
 import com.example.app.service.UserPrincipal;
 
 import jakarta.persistence.EntityNotFoundException;
+import org.springframework.web.multipart.MultipartFile;
 
 @RestController
 @RequestMapping(path = "/posts")
 public class PostsController {
     //	private final PostRepository postRepository;
     private final PostService postService;
+    private final S3Service s3Service;
 
     @Autowired
-    public PostsController(PostService postservices) {
+    public PostsController(PostService postservices, S3Service s3Service) {
         super();
 //		this.postRepository = postRepository;
         this.postService = postservices;
+        this.s3Service = s3Service;
     }
 
     @GetMapping
@@ -87,6 +92,12 @@ public class PostsController {
     public List<PostDTO> searchByKeyword(@RequestParam(name = "keyword", required = false) String keyword) {
 
         return postService.searchPostsByKeyword(keyword);
+    }
+
+    @PostMapping("/image")
+    public ResponseEntity<String> uploadImage(@RequestParam(name = "file") MultipartFile file) throws IOException {
+
+        return ResponseEntity.ok(s3Service.uploadImage(file));
     }
 
 }
