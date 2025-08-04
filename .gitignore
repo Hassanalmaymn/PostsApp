@@ -1,3 +1,4 @@
 /.metadata/
 *.properties
 app/src/main/resources/application.properties
+/app/src/main/resources

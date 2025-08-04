@@ -5,6 +5,13 @@ plugins {
 	 id("org.flywaydb.flyway") version "9.22.3" 
 }
 
+tasks.processResources {
+	duplicatesStrategy = DuplicatesStrategy.EXCLUDE
+	from("src/main/resources") {
+		include("**/*.jrxml")
+	}
+}
+
 group = "com.example"
 version = "0.0.1-SNAPSHOT"
 
@@ -18,13 +25,15 @@ repositories {
 	mavenCentral()
 }
 
+
 dependencies {
 	implementation("org.springframework.boot:spring-boot-starter-data-jpa")
+	implementation("org.apache.poi:poi-ooxml:5.2.5")
 	implementation("io.github.cdimascio:dotenv-java:3.0.0")
 	implementation("software.amazon.awssdk:s3:2.25.30")
 	implementation("software.amazon.awssdk:auth:2.25.30")
 	implementation("software.amazon.awssdk:regions:2.25.30")
-	implementation("net.sf.jasperreports:jasperreports:6.21.0")
+	implementation("net.sf.jasperreports:jasperreports:7.0.3")
 	implementation("org.springframework.boot:spring-boot-starter-web")
 	implementation("org.springframework.boot:spring-boot-starter-security")
 	implementation("io.jsonwebtoken:jjwt-api:0.11.5")
