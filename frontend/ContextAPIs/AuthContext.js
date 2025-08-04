@@ -59,7 +59,7 @@ export function AuthProvider({ children }) {
 
   function login(fetchedUser, jwt) {
     localStorage.setItem("jwt", jwt);
-    localStorage.setItem("user", JSON.stringify(user));
+    localStorage.setItem("user", JSON.stringify(fetchedUser));
     setUser({
       jwt: jwt,
       userId: fetchedUser.id,

@@ -37,6 +37,28 @@ export default function PostsPage() {
   function handleAddCategory() {
     setAddCategory((prev) => !prev);
   }
+  async function handleDownloadPosts() {
+    try {
+      const response = await api.get("/reports/posts.xlsx", {
+        responseType: "blob",
+        headers: {
+          Authorization: `Bearer ${user.jwt}`,
+        },
+      });
+      console.log(`Response status: ${response.status}`);
+      
+      const url = window.URL.createObjectURL(new Blob([response.data]));
+      const link = document.createElement("a");
+      link.href = url;
+      link.setAttribute("download", "posts.xlsx");
+      document.body.appendChild(link);
+      link.click();
+      link.remove();
+      window.URL.revokeObjectURL(url);
+    } catch (error) {
+      console.log("Error downloading posts:");
+    }
+  }
 
   useEffect(() => {
     const fetchData = async () => {
@@ -107,6 +129,14 @@ export default function PostsPage() {
               onClose={handleAddCategory}
             />
           </div>
+          <div className="ml-4">
+            <button
+              className="px-4 py-2 rounded-xl border border-gray-700 bg-gray-400 shadow-sm hover:bg-gray-500"
+              onClick={handleDownloadPosts}
+            >
+              Download Posts
+            </button>
+          </div>
         </div>
 
         {loading ? (
@@ -114,7 +144,7 @@ export default function PostsPage() {
             <Loader2 className="animate-spin w-8 h-8 text-gray-500" />
           </div>
         ) : (
-          <div className="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-3 gap-6">
+          <div className="grid grid-cols-1 sm:grid-cols-3 lg:grid-cols-4 gap-6">
             {user.isAuthinticated && <CreateNewPostCard />}
 
             {filteredPosts.length === 0 ? (

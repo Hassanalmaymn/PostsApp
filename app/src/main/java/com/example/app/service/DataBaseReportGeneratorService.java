@@ -26,10 +26,10 @@ public class DataBaseReportGeneratorService {
     public byte[] exportReport() throws Exception {
 
 
-        InputStream reportStream = getClass().getResourceAsStream("/reports/posts.jasper");
+        InputStream reportStream = getClass().getResourceAsStream("/reports/posts.jrxml");
 
         if (reportStream == null) {
-            throw new IllegalStateException("JRXML not found in classpath under /reports/posts.jasper");
+            throw new IllegalStateException("JRXML not found in classpath under /reports/posts.jrxmljrxml");
         }
 
         JasperReport report = JasperCompileManager.compileReport(reportStream);
