@@ -2,3 +2,4 @@
 *.properties
 app/src/main/resources/application.properties
 /app/src/main/resources
+app/src/main/resources/application.properties
