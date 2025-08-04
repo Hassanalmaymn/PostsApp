@@ -1,12 +1,11 @@
 package com.example.app.service;
 
-import org.springframework.beans.factory.annotation.Autowired;
-import org.springframework.core.io.ResourceLoader;
-import org.springframework.stereotype.Service;
 import net.sf.jasperreports.engine.*;
-
+import org.springframework.beans.factory.annotation.Autowired;
+import org.springframework.core.io.Resource;
+import org.springframework.core.io.ResourceLoader;
 import org.springframework.jdbc.datasource.DataSourceUtils;
-
+import org.springframework.stereotype.Service;
 
 import javax.sql.DataSource;
 import java.io.InputStream;
@@ -14,9 +13,9 @@ import java.sql.Connection;
 import java.util.HashMap;
 import java.util.Map;
 
-
 @Service
 public class DataBaseReportGeneratorService {
+
     @Autowired
     private DataSource dataSource;
 
@@ -24,26 +23,30 @@ public class DataBaseReportGeneratorService {
     private ResourceLoader resourceLoader;
 
     public byte[] exportReport() throws Exception {
+        // Load JRXML from resources (classpath:/reports/posts.jrxml)
+        Resource resource = resourceLoader.getResource("classpath:reports/posts.jrxml");
 
-
-        InputStream reportStream = getClass().getResourceAsStream("/reports/posts.jrxml");
-
-        if (reportStream == null) {
-            throw new IllegalStateException("JRXML not found in classpath under /reports/posts.jrxmljrxml");
+        if (!resource.exists()) {
+            throw new IllegalStateException("JRXML file not found at classpath:/reports/posts.jrxml");
         }
 
-        JasperReport report = JasperCompileManager.compileReport(reportStream);
+        try (
+                InputStream reportStream = resource.getInputStream();
+                Connection conn = DataSourceUtils.getConnection(dataSource)
+        ) {
+            // Compile the JRXML
+            JasperReport jasperReport = JasperCompileManager.compileReport(reportStream);
 
+            // Empty parameters map (or add your own params)
+            Map<String, Object> parameters = new HashMap<>();
 
-        Map<String, Object> params = new HashMap<>();
+            // Fill the report
+            JasperPrint jasperPrint = JasperFillManager.fillReport(jasperReport, parameters, conn);
 
-
-        Connection conn = DataSourceUtils.getConnection(dataSource);
-
-
-        JasperPrint jasperPrint = JasperFillManager.fillReport(report, params, conn);
-
-
-        return JasperExportManager.exportReportToPdf(jasperPrint);
+            // Export to PDF
+            return JasperExportManager.exportReportToPdf(jasperPrint);
+        } catch (Exception e) {
+            throw new RuntimeException("Error generating Jasper report: " + e.getMessage(), e);
+        }
     }
 }

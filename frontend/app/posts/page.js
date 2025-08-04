@@ -37,7 +37,7 @@ export default function PostsPage() {
   function handleAddCategory() {
     setAddCategory((prev) => !prev);
   }
-  async function handleDownloadPosts() {
+  async function handleDownloadPostsEXCEL() {
     try {
       const response = await api.get("/reports/posts.xlsx", {
         responseType: "blob",
@@ -46,11 +46,33 @@ export default function PostsPage() {
         },
       });
       console.log(`Response status: ${response.status}`);
-      
+
       const url = window.URL.createObjectURL(new Blob([response.data]));
       const link = document.createElement("a");
       link.href = url;
       link.setAttribute("download", "posts.xlsx");
+      document.body.appendChild(link);
+      link.click();
+      link.remove();
+      window.URL.revokeObjectURL(url);
+    } catch (error) {
+      console.log("Error downloading posts:");
+    }
+  }
+  async function handleDownloadPostsPDF() {
+    try {
+      const response = await api.get("/reports/posts", {
+        responseType: "blob",
+        headers: {
+          Authorization: `Bearer ${user.jwt}`,
+        },
+      });
+      console.log(`Response status: ${response.status}`);
+
+      const url = window.URL.createObjectURL(new Blob([response.data]));
+      const link = document.createElement("a");
+      link.href = url;
+      link.setAttribute("download", "posts.PDF");
       document.body.appendChild(link);
       link.click();
       link.remove();
@@ -132,9 +154,17 @@ export default function PostsPage() {
           <div className="ml-4">
             <button
               className="px-4 py-2 rounded-xl border border-gray-700 bg-gray-400 shadow-sm hover:bg-gray-500"
-              onClick={handleDownloadPosts}
+              onClick={handleDownloadPostsEXCEL}
             >
-              Download Posts
+              Download Posts in EXCEL format
+            </button>
+          </div>
+          <div className="ml-4">
+            <button
+              className="px-4 py-2 rounded-xl border border-gray-700 bg-gray-400 shadow-sm hover:bg-gray-500"
+              onClick={handleDownloadPostsPDF}
+            >
+              Download Posts in PDF format
             </button>
           </div>
         </div>

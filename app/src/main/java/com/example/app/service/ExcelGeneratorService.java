@@ -7,8 +7,10 @@ import org.springframework.stereotype.Service;
 
 import java.io.ByteArrayOutputStream;
 import java.io.FileOutputStream;
+import java.time.LocalDateTime;
 import java.util.List;
 import java.util.Map;
+
 @Service
 public class ExcelGeneratorService {
     private final PostService postService;
@@ -39,6 +41,9 @@ public class ExcelGeneratorService {
             Cell contentHeader = headerRow.createCell(1);
             contentHeader.setCellValue("Content");
             contentHeader.setCellStyle(headerStyle);
+            Cell createdAtHeader = headerRow.createCell(2);
+            createdAtHeader.setCellValue("created At");
+            createdAtHeader.setCellStyle(headerStyle);
 
             // Data rows
             int rowIdx = 1;
@@ -46,6 +51,7 @@ public class ExcelGeneratorService {
                 Row row = sheet.createRow(rowIdx++);
                 row.createCell(0).setCellValue(post.getTitle());
                 row.createCell(1).setCellValue(post.getContent());
+                row.createCell(2).setCellValue(java.sql.Timestamp.valueOf(post.getCreated_at()));
             }
 
             // Auto-size columns

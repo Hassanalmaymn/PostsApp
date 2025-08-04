@@ -13,18 +13,17 @@ export async function createPost(prevState, formData) {
   const user_id = formData.get("user_id");
   const image = formData.get("image");
   imageFormData.append("file", image);
-  
+
   const imageUrl = await api.post("/posts/image", imageFormData, {
     headers: {
       "Content-Type": "multipart/form-data",
       Authorization: `Bearer ${jwt}`,
     },
   });
-  console.log(imageUrl.data);
   const post = {
     title,
     content,
-    imageUrl: imageUrl.data,
+    imageUrl: imageUrl.data.url,
     user: {
       id: user_id,
     },
