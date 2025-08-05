@@ -1,27 +1,19 @@
 package com.example.app.service;
 
-import com.example.app.model.Post;
+import com.example.app.DTO.ReportPosts;
 import org.apache.poi.ss.usermodel.*;
 import org.apache.poi.xssf.usermodel.XSSFWorkbook;
 import org.springframework.stereotype.Service;
 
 import java.io.ByteArrayOutputStream;
-import java.io.FileOutputStream;
-import java.time.LocalDateTime;
 import java.util.List;
-import java.util.Map;
+
 
 @Service
 public class ExcelGeneratorService {
-    private final PostService postService;
-
-    public ExcelGeneratorService(PostService postService) {
-        this.postService = postService;
-    }
 
 
-    public byte[] generatePostReport() {
-        List<Post> posts = postService.getAllPosts();
+    public byte[] generatePostReport(List<ReportPosts> posts) {
 
         try (Workbook workbook = new XSSFWorkbook()) {
             Sheet sheet = workbook.createSheet("Posts");
@@ -44,19 +36,25 @@ public class ExcelGeneratorService {
             Cell createdAtHeader = headerRow.createCell(2);
             createdAtHeader.setCellValue("created At");
             createdAtHeader.setCellStyle(headerStyle);
+            Cell Author = headerRow.createCell(3);
+            createdAtHeader.setCellValue("Author");
+            createdAtHeader.setCellStyle(headerStyle);
 
-            // Data rows
+
             int rowIdx = 1;
-            for (Post post : posts) {
+            for (ReportPosts post : posts) {
                 Row row = sheet.createRow(rowIdx++);
                 row.createCell(0).setCellValue(post.getTitle());
                 row.createCell(1).setCellValue(post.getContent());
                 row.createCell(2).setCellValue(java.sql.Timestamp.valueOf(post.getCreated_at()));
+                row.createCell(3).setCellValue(post.getAuthor());
             }
 
             // Auto-size columns
             sheet.autoSizeColumn(0);
             sheet.autoSizeColumn(1);
+            sheet.autoSizeColumn(2);
+            sheet.autoSizeColumn(3);
 
             // Return byte array
             ByteArrayOutputStream out = new ByteArrayOutputStream();

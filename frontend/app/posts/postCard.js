@@ -10,7 +10,7 @@ export default function PostCard({ post }) {
             {post.content}
           </p>
         </div>
-       {post.imageUrl && <div>
+       {post.imageUrl?.length > 0 && <div>
           <img
             src={post.imageUrl}
             alt={post.title}

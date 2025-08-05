@@ -4,8 +4,10 @@ import java.util.List;
 import java.util.Optional;
 import java.util.stream.Collectors;
 
+import com.example.app.DTO.ReportPosts;
 import com.example.app.model.Role;
 import com.example.app.repository.RoleRepository;
+import net.sf.jasperreports.engine.JRException;
 import org.modelmapper.ModelMapper;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.data.domain.Page;
@@ -30,28 +32,36 @@ import jakarta.persistence.EntityNotFoundException;
 @Service
 public class PostService {
 
-    @Autowired
+    private final ExcelGeneratorService excelReportGnerator;
+    private final DataBaseReportGeneratorService reportGenerator;
     private final PostRepository postRepository;
     private final UserService userService;
     private final ModelMapper modelMapper;
     private final RoleRepository roleRepository;
 
-    public PostService(PostRepository postRepository, UserService userService, ModelMapper modelMapper, RoleRepository roleRepository) {
+    public PostService(ExcelGeneratorService excelReportGnerator, DataBaseReportGeneratorService reportGenerator, PostRepository postRepository, UserService userService, ModelMapper modelMapper, RoleRepository roleRepository) {
         super();
+        this.excelReportGnerator = excelReportGnerator;
+        this.reportGenerator = reportGenerator;
         this.postRepository = postRepository;
         this.modelMapper = modelMapper;
         this.userService = userService;
         this.roleRepository = roleRepository;
     }
 
-    public List<PostDTO> searchPostsByKeyword(String keyword) {
+    private List<Post> getPostsByKeyWord(String keyword) {
         Specification<Post> spec = (root, query, cb) -> cb.conjunction();
 
         if (keyword != null && !keyword.isBlank()) {
             spec = spec.and(PostSpecifications.findByKeyword(keyword));
         }
+        return postRepository.findAll(spec);
+    }
 
-        return postRepository.findAll(spec).stream().map((post) -> modelMapper.map(post, PostDTO.class))
+    public List<PostDTO> searchPostsByKeyword(String keyword) {
+
+
+        return getPostsByKeyWord(keyword).stream().map((post) -> modelMapper.map(post, PostDTO.class))
                 .collect(Collectors.toList());
     }
 
@@ -146,5 +156,25 @@ public class PostService {
 
     public List<Post> getAllPosts() {
         return postRepository.findAll();
+    }
+
+    public byte[] getPostsHasKeyWordPDF(String keyword) throws JRException {
+        List<ReportPosts> posts = getPostsByKeyWord(keyword).stream().
+                map(post -> new ReportPosts(post.getTitle(), post.getContent(), post.getUser().getName(), post.getCreated_at())).collect(Collectors.toList());
+        return reportGenerator.generatePostPdf(posts);
+
+
+    }
+
+    public byte[] generatePostReport() {
+        List<Post> posts = postRepository.findAll();
+        List<ReportPosts> reportPosts = posts.stream().map(post -> new ReportPosts(post.getTitle(), post.getContent(), post.getUser().getName(), post.getCreated_at())).collect(Collectors.toList());
+        return excelReportGnerator.generatePostReport(reportPosts);
+    }
+
+    public byte[] generatePostReportKeyword(String keyword) {
+        List<Post> posts = getPostsByKeyWord(keyword);
+        List<ReportPosts> reportPosts = posts.stream().map(post -> new ReportPosts(post.getTitle(), post.getContent(), post.getUser().getName(), post.getCreated_at())).collect(Collectors.toList());
+        return excelReportGnerator.generatePostReport(reportPosts);
     }
 }

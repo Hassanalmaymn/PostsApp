@@ -1,6 +1,8 @@
 package com.example.app.service;
 
+import com.example.app.DTO.ReportPosts;
 import net.sf.jasperreports.engine.*;
+import net.sf.jasperreports.engine.data.JRBeanCollectionDataSource;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.core.io.Resource;
 import org.springframework.core.io.ResourceLoader;
@@ -11,6 +13,7 @@ import javax.sql.DataSource;
 import java.io.InputStream;
 import java.sql.Connection;
 import java.util.HashMap;
+import java.util.List;
 import java.util.Map;
 
 @Service
@@ -22,8 +25,27 @@ public class DataBaseReportGeneratorService {
     @Autowired
     private ResourceLoader resourceLoader;
 
+    public byte[] generatePostPdf(List<ReportPosts> posts) throws JRException {
+
+        InputStream reportStream = getClass().getResourceAsStream("/reports/posts.jrxml");
+        JasperReport report = JasperCompileManager.compileReport(reportStream);
+
+
+        JRBeanCollectionDataSource dataSource = new JRBeanCollectionDataSource(posts);
+
+
+        HashMap<String, Object> params = new HashMap<>();
+        params.put("generatedBy", "postsApp");
+
+
+        JasperPrint print = JasperFillManager.fillReport(report, params, dataSource);
+
+
+        return JasperExportManager.exportReportToPdf(print);
+    }
+
     public byte[] exportReport() throws Exception {
-        // Load JRXML from resources (classpath:/reports/posts.jrxml)
+
         Resource resource = resourceLoader.getResource("classpath:reports/posts.jrxml");
 
         if (!resource.exists()) {
@@ -39,7 +61,6 @@ public class DataBaseReportGeneratorService {
 
 
             Map<String, Object> parameters = new HashMap<>();
-
 
 
             JasperPrint jasperPrint = JasperFillManager.fillReport(jasperReport, parameters, conn);

@@ -4,9 +4,12 @@ import java.io.IOException;
 import java.util.List;
 
 import com.example.app.service.S3Service;
+import net.sf.jasperreports.engine.JRException;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.data.domain.Page;
+import org.springframework.http.HttpHeaders;
 import org.springframework.http.HttpStatus;
+import org.springframework.http.MediaType;
 import org.springframework.http.ResponseEntity;
 import org.springframework.security.access.AccessDeniedException;
 import org.springframework.security.access.prepost.PreAuthorize;
@@ -98,6 +101,48 @@ public class PostsController {
     public ResponseEntity<String> uploadImage(@RequestParam(name = "file") MultipartFile file) throws IOException {
 
         return ResponseEntity.ok(s3Service.uploadImage(file));
+    }
+
+    @GetMapping("posts.PDF/search")
+    @PreAuthorize("hasAuthority('REPORT_VIEW')")
+    public ResponseEntity<byte[]> searchByKeywordPDF(@RequestParam(name = "keyword", required = false) String keyword) throws JRException {
+
+        byte[] PDFFile = postService.getPostsHasKeyWordPDF(keyword);
+        return ResponseEntity.ok().header(HttpHeaders.CONTENT_DISPOSITION, "attachment; filename=posts.pdf")
+                .contentType(MediaType.APPLICATION_PDF)
+                .body(PDFFile);
+    }
+
+    @GetMapping("/posts.xlsx")
+    @PreAuthorize("hasAuthority('REPORT_VIEW')")
+    public ResponseEntity<byte[]> downloadExcel() throws Exception {
+
+
+        byte[] excelFile = this.postService.generatePostReport();
+
+        HttpHeaders headers = new HttpHeaders();
+        headers.setContentType(MediaType.parseMediaType("application/vnd.openxmlformats-officedocument.spreadsheetml.sheet"));
+        headers.set(HttpHeaders.CONTENT_DISPOSITION, "attachment; filename=posts.xlsx");
+
+        return ResponseEntity.ok()
+                .headers(headers)
+                .body(excelFile);
+    }
+
+    @GetMapping("/posts.xlsx/search")
+    @PreAuthorize("hasAuthority('REPORT_VIEW')")
+    public ResponseEntity<byte[]> downloadExcelPostsWithKeyword(@RequestParam(name = "keyword") String keyword) throws Exception {
+
+
+        byte[] excelFile = this.postService.generatePostReportKeyword(keyword);
+
+        HttpHeaders headers = new HttpHeaders();
+        headers.setContentType(MediaType.parseMediaType("application/vnd.openxmlformats-officedocument.spreadsheetml.sheet"));
+        headers.set(HttpHeaders.CONTENT_DISPOSITION, "attachment; filename=posts.xlsx");
+
+        return ResponseEntity.ok()
+                .headers(headers)
+                .body(excelFile);
     }
 
 }
