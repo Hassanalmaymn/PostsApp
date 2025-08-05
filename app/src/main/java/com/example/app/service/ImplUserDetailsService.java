@@ -23,7 +23,6 @@ public class ImplUserDetailsService implements UserDetailsService {
         User user = userRepo.findUserByEmail(username)
                 .orElseThrow(() -> new UsernameNotFoundException("User not found"));
 
-        // 🔑 Force loading of roles and their privileges
         user.getRoles().forEach(role -> role.getPrivileges().size());
 
         return new UserPrincipal(user);

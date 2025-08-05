@@ -13,23 +13,25 @@ export async function createPost(prevState, formData) {
   const user_id = formData.get("user_id");
   const image = formData.get("image");
   imageFormData.append("file", image);
-
-  const imageUrl = await api.post("/posts/image", imageFormData, {
-    headers: {
-      "Content-Type": "multipart/form-data",
-      Authorization: `Bearer ${jwt}`,
-    },
-  });
+  let imageUrl = null;
+  if (image.size > 0) {
+    imageUrl = await api.post("/posts/image", imageFormData, {
+      headers: {
+        "Content-Type": "multipart/form-data",
+        Authorization: `Bearer ${jwt}`,
+      },
+    });
+  }
   const post = {
     title,
     content,
-    imageUrl: imageUrl.data.url,
+    imageUrl: imageUrl?.data.url,
     user: {
       id: user_id,
     },
     categories: catIds.map((id) => ({ id: Number(id) })),
   };
-  if (imageUrl.status === 200) {
+  if (image.size === 0 || imageUrl?.status === 200) {
     await api.post("/posts/create", post, {
       headers: {
         "Content-Type": "application/json",

@@ -14,6 +14,7 @@ import javax.crypto.KeyGenerator;
 import javax.crypto.SecretKey;
 
 import org.springframework.beans.factory.annotation.Autowired;
+import org.springframework.beans.factory.annotation.Value;
 import org.springframework.security.core.GrantedAuthority;
 import org.springframework.security.core.userdetails.UserDetails;
 import org.springframework.stereotype.Service;
@@ -26,22 +27,21 @@ import io.jsonwebtoken.security.Keys;
 
 @Service
 public class JWTService {
+	@Value("${my-secret-key}")
 	private String sercretKey;
 
-	public JWTService() {
-		this.sercretKey = generateSecretKey();
-	}
 
-	public String generateSecretKey() {
-		try {
-			KeyGenerator keyGen = KeyGenerator.getInstance("HmacSHA256");
-			SecretKey secretKey = keyGen.generateKey();
-			System.out.println("Secret Key : " + secretKey.toString());
-			return Base64.getEncoder().encodeToString(secretKey.getEncoded());
-		} catch (NoSuchAlgorithmException e) {
-			throw new RuntimeException("Error generating secret key", e);
-		}
-	}
+
+//	public String generateSecretKey() {
+//		try {
+//			KeyGenerator keyGen = KeyGenerator.getInstance("HmacSHA256");
+//			SecretKey secretKey = keyGen.generateKey();
+//			System.out.println("Secret Key : " + secretKey.toString());
+//			return Base64.getEncoder().encodeToString(secretKey.getEncoded());
+//		} catch (NoSuchAlgorithmException e) {
+//			throw new RuntimeException("Error generating secret key", e);
+//		}
+//	}
 
 	public String generateToken(UserDetails user) {
 

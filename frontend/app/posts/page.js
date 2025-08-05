@@ -39,7 +39,7 @@ export default function PostsPage() {
   }
   async function handleDownloadPostsEXCEL() {
     try {
-      const response = await api.get("/reports/posts.xlsx", {
+      const response = await api.get("/posts/posts.xlsx", {
         responseType: "blob",
         headers: {
           Authorization: `Bearer ${user.jwt}`,

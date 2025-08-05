@@ -22,10 +22,7 @@ public class UserPrincipal implements UserDetails {
     public Collection<? extends GrantedAuthority> getAuthorities() {
         return user.getRoles().stream()
                 .flatMap(role -> role.getPrivileges().stream())
-                .map(privilege -> {
-                    System.out.println(privilege.getPrivilege());
-                    return new SimpleGrantedAuthority(privilege.getPrivilege());
-                })
+                .map(privilege -> new SimpleGrantedAuthority(privilege.getPrivilege()))
                 .collect(Collectors.toSet());
     }
 
